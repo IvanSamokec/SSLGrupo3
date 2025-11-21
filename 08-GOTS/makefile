@@ -1,48 +1,51 @@
-# =====================================
-# Makefile para analizador C simplificado
-# Archivos: lexer.y (Bison) y lexer.l (Flex)
-# =====================================
-
-# --- Herramientas ---
+LEX = flex
 YACC = bison
-LEX  = flex
-CC   = gcc
+CC = gcc
+CFLAGS = -Wall -Wextra -g
 
-# --- Archivos fuente ---
-PARSER = lexer.y
-LEXER  = lexer.l
-TARGET = analizador
+all: parser
 
-# --- Archivos generados ---
-YACC_C = lexer.tab.c
-YACC_H = lexer.tab.h
-LEX_C  = lex.yy.c
+parser: parser.tab.o lex.yy.o symbol_table.o
+	$(CC) $(CFLAGS) parser.tab.o lex.yy.o symbol_table.o -o parser
 
-# --- Flags ---
-CFLAGS  = -Wall -Wextra -std=c99
-LDFLAGS = -lm
+parser.tab.o: parser.tab.c parser.tab.h symbol_table.h
+	$(CC) $(CFLAGS) -c parser.tab.c -o parser.tab.o
 
-# --- Regla principal ---
-all: $(TARGET)
+lex.yy.o: lex.yy.c parser.tab.h
+	$(CC) $(CFLAGS) -c lex.yy.c -o lex.yy.o
 
-# Compilación del ejecutable final
-$(TARGET): $(YACC_C) $(LEX_C)
-	$(CC) $(CFLAGS) $(YACC_C) $(LEX_C) -o $(TARGET) $(LDFLAGS)
+symbol_table.o: symbol_table.c symbol_table.h
+	$(CC) $(CFLAGS) -c symbol_table.c -o symbol_table.o
 
-# Generación de archivos de Bison (.tab.c y .tab.h)
-$(YACC_C) $(YACC_H): $(PARSER)
-	$(YACC) -d -v $(PARSER)
+parser.tab.c parser.tab.h: parser.y
+	$(YACC) -d parser.y
 
-# Generación de archivo de Flex (lex.yy.c)
-$(LEX_C): $(LEXER) $(YACC_H)
-	$(LEX) $(LEXER)
+lex.yy.c: lexer.l
+	$(LEX) lexer.l
 
-# Limpieza de archivos generados
+test-valid: parser
+	@echo "\n=== Probando archivos válidos ===\n"
+	@./parser archivoValido.go
+	@echo "\n"
+	@./parser archivoValido2.go
+
+test-invalid: parser
+	@echo "\n=== Probando archivos inválidos ===\n"
+	@./parser archivoInvalido.go
+	@echo "\n"
+	@./parser archivoInvalido2.go
+
+test-semantic: parser
+	@echo "\n=== Probando archivos con errores semánticos ===\n"
+	@./parser testSemantico1.go
+	@echo "\n"
+	@./parser testSemantico2.go
+	@echo "\n"
+	@./parser testSemantico3.go
+
+test-all: test-valid test-invalid test-semantic
+
 clean:
-	rm -f $(YACC_C) $(YACC_H) $(LEX_C) lexer.output $(TARGET)
+	rm -f parser.tab.c parser.tab.h parser.tab.o lex.yy.c lex.yy.o symbol_table.o parser parser.exe
 
-# Limpieza total
-distclean: clean
-	rm -f *.o
-
-.PHONY: all clean distclean
+.PHONY: all clean test-valid test-invalid test-semantic test-all

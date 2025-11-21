@@ -1,11 +1,10 @@
 %option noinput nounput noyywrap
 
-
 %{
-   #include <stdio.h>
-   #include <stdlib.h>
-   #include <string.h>
-   #include "lexer.tab.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "parser.tab.h"
 
 void iniciarUbicaciones() {
     yylloc.first_line = yylloc.last_line = 1;
@@ -26,127 +25,198 @@ void actualizarLocationsColumnas() {
 extern int errorCount;
 %}
 
-
 DECIMAL         0|[1-9][0-9]*
 OCTAL           0[0-7]+
 HEXADECIMAL     0[xX][0-9a-fA-F]+
-REAL            ("-")?(([0-9]+"."[0-9]+([Ee]("+"|"-")?[0-9]+)?)|([0-9]+[Ee]("+"|"-")?[0-9]+))
-CARACTER        \'(.|\\.)\'
-LITERAL_CADENA  \"(.|\\.)*\"
-TIPO_DATO       int|double|float|char|void
+REAL            [0-9]+\.[0-9]+([Ee][+-]?[0-9]+)?|[0-9]+[Ee][+-]?[0-9]+
+CARACTER        \'(\\.|[^'\\])\'
+LITERAL_CADENA  \"(\\.|[^"\\])*\"
+RAW_STRING      `[^`]*`
+TIPO_DATO       int|float32|float64|string|bool|rune|byte
 IDENTIFICADOR   [a-zA-Z_][a-zA-Z0-9_]*
 
-
 %%
+
 [ \t\r] { 
     actualizarLocationsColumnas();
 }
+
 "\n" {
     actualizarLocationsNuevaFila();
+}
+
+"//"[^\n]* {
+    actualizarLocationsColumnas();
+}
+
+"/*"([^*]|\*+[^*/])*\*+"/" {
+    actualizarLocationsColumnas();
+}
+
+package { 
+    printf("Palabra reservada: %s\n", yytext); 
+    actualizarLocationsColumnas();
+    return PACKAGE;
+}
+
+import { 
+    printf("Palabra reservada: %s\n", yytext); 
+    actualizarLocationsColumnas();
+    return IMPORT;
+}
+
+func { 
+    printf("Palabra reservada: %s\n", yytext); 
+    actualizarLocationsColumnas();
+    return FUNC;
+}
+
+var { 
+    printf("Palabra reservada: %s\n", yytext); 
+    actualizarLocationsColumnas();
+    return VAR;
+}
+
+const { 
+    printf("Palabra reservada: %s\n", yytext); 
+    actualizarLocationsColumnas();
+    return CONST;
+}
+
+type { 
+    printf("Palabra reservada: %s\n", yytext); 
+    actualizarLocationsColumnas();
+    return TYPE;
+}
+
+struct { 
+    printf("Palabra reservada: %s\n", yytext); 
+    actualizarLocationsColumnas();
+    return STRUCT;
+}
+
+if { 
+    printf("Palabra reservada: %s\n", yytext); 
+    actualizarLocationsColumnas();
+    return IF;
+}
+
+else { 
+    printf("Palabra reservada: %s\n", yytext); 
+    actualizarLocationsColumnas();
+    return ELSE;
+}
+
+for { 
+    printf("Palabra reservada: %s\n", yytext); 
+    actualizarLocationsColumnas();
+    return FOR;
+}
+
+switch { 
+    printf("Palabra reservada: %s\n", yytext); 
+    actualizarLocationsColumnas();
+    return SWITCH;
+}
+
+case { 
+    printf("Palabra reservada: %s\n", yytext); 
+    actualizarLocationsColumnas();
+    return CASE;
+}
+
+default { 
+    printf("Palabra reservada: %s\n", yytext); 
+    actualizarLocationsColumnas();
+    return DEFAULT;
+}
+
+return { 
+    printf("Palabra reservada: %s\n", yytext); 
+    actualizarLocationsColumnas();
+    return RETURN;
+}
+
+break { 
+    printf("Palabra reservada: %s\n", yytext); 
+    actualizarLocationsColumnas();
+    return BREAK;
+}
+
+continue { 
+    printf("Palabra reservada: %s\n", yytext); 
+    actualizarLocationsColumnas();
+    return CONTINUE;
+}
+
+{TIPO_DATO} { 
+    printf("Tipo de dato: %s\n", yytext); 
+    actualizarLocationsColumnas();
+    yylval.cadena = strdup(yytext); 
+    return TIPO_DATO;
+}
+
+true { 
+    printf("Literal booleano: %s\n", yytext); 
+    actualizarLocationsColumnas();
+    yylval.ival = 1;
+    return TRUE;
+}
+
+false { 
+    printf("Literal booleano: %s\n", yytext); 
+    actualizarLocationsColumnas();
+    yylval.ival = 0;
+    return FALSE;
 }
 
 {DECIMAL} { 
     printf("Constante entera decimal: %s\n", yytext); 
     actualizarLocationsColumnas();
-    yylval.ival=strtol(yytext, NULL, 0); 
+    yylval.ival = strtol(yytext, NULL, 10); 
     return ENTERO;
-} //ival guarda en yylval el num entero con su valor como decimal
+}
+
 {OCTAL} { 
     printf("Constante entera octal: %s\n", yytext); 
     actualizarLocationsColumnas();
-    yylval.ival=strtol(yytext, NULL, 0); 
+    yylval.ival = strtol(yytext, NULL, 8); 
     return ENTERO;
 }
+
 {HEXADECIMAL} { 
     printf("Constante entera hexadecimal: %s\n", yytext); 
     actualizarLocationsColumnas();
-    yylval.ival=strtol(yytext, NULL, 0); 
+    yylval.ival = strtol(yytext, NULL, 16); 
     return ENTERO;
 }
 
 {REAL} { 
     printf("Constante real: %s\n", yytext); 
     actualizarLocationsColumnas();
-    yylval.dval=atof(yytext); 
-    return NUMERO;
-} //dval guarda en yylval el num como punto flotante
+    yylval.dval = atof(yytext); 
+    return REAL;
+}
 
 {CARACTER} { 
     printf("Constante caracter: %s\n", yytext); 
     actualizarLocationsColumnas();
     yylval.cval = yytext[1]; 
     return CARACTER;
-} //cval guardara en yylval el char ya sea 'a' o '\n'
+}
 
 {LITERAL_CADENA} { 
     printf("Literal cadena: %s\n", yytext); 
     actualizarLocationsColumnas();
     yylval.cadena = strdup(yytext); 
     return CADENA;
-} //guarda en yylval un string del erx leido
-
-{TIPO_DATO} { 
-    printf("Palabra reservada (tipo de dato): %s\n", yytext); 
-    actualizarLocationsColumnas();
-    yylval.cadena = strdup(yytext); 
-    return TIPO_DATO;
 }
 
-if { 
-    printf("Palabra reservada (estructura de control): %s\n", yytext); 
+{RAW_STRING} { 
+    printf("Raw string: %s\n", yytext); 
     actualizarLocationsColumnas();
     yylval.cadena = strdup(yytext); 
-    return IF;
-}
-else { 
-    printf("Palabra reservada (estructura de control): %s\n", yytext); 
-    actualizarLocationsColumnas();
-    yylval.cadena = strdup(yytext); 
-    return ELSE;
-}
-while { 
-    printf("Palabra reservada (estructura de control): %s\n", yytext); 
-    actualizarLocationsColumnas();
-    yylval.cadena = strdup(yytext); 
-    return WHILE;
-}
-for { 
-    printf("Palabra reservada (estructura de control): %s\n", yytext); 
-    actualizarLocationsColumnas();
-    yylval.cadena = strdup(yytext); 
-    return FOR;
-}
-return { 
-    printf("Palabra reservada (estructura de control): %s\n", yytext); 
-    actualizarLocationsColumnas();
-    yylval.cadena = strdup(yytext); 
-    return RETURN;
-}
-
-const { 
-    printf("Palabra reservada (otro): %s\n", yytext); 
-    actualizarLocationsColumnas();
-    yylval.cadena = strdup(yytext); 
-    return CONST;
-}
-unsigned {
-    printf("Palabra reservada (otro): %s\n", yytext); 
-    actualizarLocationsColumnas();
-    yylval.cadena = strdup(yytext); 
-    return UNSIGNED;
-}
-extern { 
-    printf("Palabra reservada (otro): %s\n", yytext); 
-    actualizarLocationsColumnas();
-    yylval.cadena = strdup(yytext); 
-    return EXTERN;
-}
-
-enum { 
-    printf("Palabra reservada (enumerador): %s\n", yytext); 
-    actualizarLocationsColumnas();
-    yylval.cadena = strdup(yytext); 
-    return ENUM;
+    return CADENA;
 }
 
 {IDENTIFICADOR} { 
@@ -156,161 +226,208 @@ enum {
     return IDENTIFICADOR;
 }
 
-"?"  { 
+":=" { 
     printf("Operador: %s\n", yytext); 
     actualizarLocationsColumnas();
-    return '?'; 
+    return DECLARACION_CORTA;
 }
-":"  { 
-    printf("Operador: %s\n", yytext);
-    actualizarLocationsColumnas();
-    return ':'; 
-}
-"++" { 
-    printf("Operador: %s\n", yytext); 
-    actualizarLocationsColumnas();
-    return INCREMENTO; 
-}
-"--" { 
-    printf("Operador: %s\n", yytext); 
-    actualizarLocationsColumnas();
-    return DECREMENTO; 
-}
+
 "+=" { 
     printf("Operador: %s\n", yytext); 
     actualizarLocationsColumnas();
-    return MAS_IGUAL; 
+    return MAS_IGUAL;
 }
+
 "-=" { 
     printf("Operador: %s\n", yytext); 
     actualizarLocationsColumnas();
     return MENOS_IGUAL;
 }
-"+"  { 
-    printf("Operador: %s\n", yytext); 
-    actualizarLocationsColumnas();
-    return '+'; 
-}
-"-"  { 
-    printf("Operador: %s\n", yytext); 
-    actualizarLocationsColumnas();
-    return '-'; 
-}
+
 "*=" { 
     printf("Operador: %s\n", yytext); 
     actualizarLocationsColumnas();
-    return POR_IGUAL; 
+    return POR_IGUAL;
 }
-"*" { 
-    printf("Operador: %s\n", yytext); 
-    actualizarLocationsColumnas();
-    return '*'; 
-}
+
 "/=" { 
     printf("Operador: %s\n", yytext); 
     actualizarLocationsColumnas();
-    return DIV_IGUAL; 
+    return DIV_IGUAL;
 }
-"/"  { 
+
+"%=" { 
     printf("Operador: %s\n", yytext); 
     actualizarLocationsColumnas();
-    return '/'; 
+    return MOD_IGUAL;
 }
+
+"++" { 
+    printf("Operador: %s\n", yytext); 
+    actualizarLocationsColumnas();
+    return INCREMENTO;
+}
+
+"--" { 
+    printf("Operador: %s\n", yytext); 
+    actualizarLocationsColumnas();
+    return DECREMENTO;
+}
+
+"+" { 
+    printf("Operador: %s\n", yytext); 
+    actualizarLocationsColumnas();
+    return '+';
+}
+
+"-" { 
+    printf("Operador: %s\n", yytext); 
+    actualizarLocationsColumnas();
+    return '-';
+}
+
+"*" { 
+    printf("Operador: %s\n", yytext); 
+    actualizarLocationsColumnas();
+    return '*';
+}
+
+"/" { 
+    printf("Operador: %s\n", yytext); 
+    actualizarLocationsColumnas();
+    return '/';
+}
+
+"%" { 
+    printf("Operador: %s\n", yytext); 
+    actualizarLocationsColumnas();
+    return '%';
+}
+
 "==" { 
     printf("Operador: %s\n", yytext); 
     actualizarLocationsColumnas();
-    return IGUALDAD; 
+    return IGUALDAD;
 }
-"="  { 
-    printf("Operador: %s\n", yytext); 
-    actualizarLocationsColumnas();
-    return '='; 
-}
+
 "!=" { 
     printf("Operador: %s\n", yytext); 
     actualizarLocationsColumnas();
-    return DIFERENTE; 
+    return DIFERENTE;
 }
-"!"  { 
-    printf("Operador: %s\n", yytext); 
-    actualizarLocationsColumnas();
-    return '!'; 
-}
-"&&" { 
-    printf("Operador: %s\n", yytext); 
-    actualizarLocationsColumnas();
-    return AND; 
-}
-"||" { 
-    printf("Operador: %s\n", yytext); 
-    actualizarLocationsColumnas();
-    return OR; 
-}
-">=" { 
-    printf("Operador: %s\n", yytext); 
-    actualizarLocationsColumnas();
-    return MAYOR_IGUAL; 
-}
-">"  { 
-    printf("Operador: %s\n", yytext); 
-    actualizarLocationsColumnas();
-    return '>'; 
-}
+
 "<=" { 
     printf("Operador: %s\n", yytext); 
     actualizarLocationsColumnas();
-    return MENOR_IGUAL; 
+    return MENOR_IGUAL;
 }
-"<"  { 
+
+">=" { 
     printf("Operador: %s\n", yytext); 
     actualizarLocationsColumnas();
-    return '<'; 
+    return MAYOR_IGUAL;
+}
+
+"<" { 
+    printf("Operador: %s\n", yytext); 
+    actualizarLocationsColumnas();
+    return '<';
+}
+
+">" { 
+    printf("Operador: %s\n", yytext); 
+    actualizarLocationsColumnas();
+    return '>';
+}
+
+"&&" { 
+    printf("Operador: %s\n", yytext); 
+    actualizarLocationsColumnas();
+    return AND;
+}
+
+"||" { 
+    printf("Operador: %s\n", yytext); 
+    actualizarLocationsColumnas();
+    return OR;
+}
+
+"!" { 
+    printf("Operador: %s\n", yytext); 
+    actualizarLocationsColumnas();
+    return '!';
+}
+
+"=" { 
+    printf("Operador: %s\n", yytext); 
+    actualizarLocationsColumnas();
+    return '=';
 }
 
 ";" { 
     printf("Caracter de puntuacion: %s\n", yytext); 
     actualizarLocationsColumnas();
-    return ';'; 
+    return ';';
 }
+
 "," { 
     printf("Caracter de puntuacion: %s\n", yytext); 
     actualizarLocationsColumnas();
-    return ','; 
+    return ',';
 }
+
+"." { 
+    printf("Caracter de puntuacion: %s\n", yytext); 
+    actualizarLocationsColumnas();
+    return '.';
+}
+
+":" { 
+    printf("Caracter de puntuacion: %s\n", yytext); 
+    actualizarLocationsColumnas();
+    return ':';
+}
+
 "{" { 
     printf("Caracter de puntuacion: %s\n", yytext); 
     actualizarLocationsColumnas();
     return '{';
 }
+
 "}" { 
     printf("Caracter de puntuacion: %s\n", yytext); 
     actualizarLocationsColumnas();
-    return '}'; 
+    return '}';
 }
+
 "(" { 
     printf("Caracter de puntuacion: %s\n", yytext); 
     actualizarLocationsColumnas();
-    return '('; 
+    return '(';
 }
+
 ")" { 
     printf("Caracter de puntuacion: %s\n", yytext); 
     actualizarLocationsColumnas();
-    return ')'; 
+    return ')';
 }
+
 "[" { 
     printf("Caracter de puntuacion: %s\n", yytext); 
     actualizarLocationsColumnas();
-    return '['; 
+    return '[';
 }
+
 "]" { 
     printf("Caracter de puntuacion: %s\n", yytext); 
     actualizarLocationsColumnas();
-    return ']'; 
+    return ']';
 }
 
 . {
     actualizarLocationsColumnas();
-    fprintf(stderr, "Error léxico <linea:%d columna:%d> Caracter no válido: '%s'\n", yylloc.first_line, yylloc.first_column, yytext);
+    fprintf(stderr, "Error léxico <linea:%d columna:%d> Caracter no válido: '%s'\n", 
+            yylloc.first_line, yylloc.first_column, yytext);
     errorCount++;
 }
 
