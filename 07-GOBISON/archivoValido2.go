@@ -6,7 +6,7 @@ import "fmt"
 type Color int
 
 const (
-    ROJO Color = iota
+    ROJO Color = iota + 1
     VERDE
     AZUL
 )
