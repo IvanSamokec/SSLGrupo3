@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "symbol_table.h"
+#include "tabla_simbolos.h"
 
 int yylex(void);
 void yyerror(const char *s);
@@ -11,6 +11,10 @@ int errorCount = 0;
 Symbol *currentFunction = NULL;
 bool hasReturnStatement = false;
 %}
+
+%code requires {
+    #include "tabla_simbolos.h"
+}
 
 %locations
 
@@ -43,7 +47,7 @@ bool hasReturnStatement = false;
 
 /* Tipos para no terminales */
 %type <tipo> tipo expresion
-%type <cadena> tipo_retorno
+%type <cadena> tipo_retorno opt_tipo_retorno
 %type <simbolo> funcion
 
 /* Precedencia y asociatividad */
@@ -63,30 +67,26 @@ programa:
     PACKAGE IDENTIFICADOR 
     {
         initSymbolTable();
-        printf("Iniciando análisis semántico...\n");
     }
     imports declaraciones_top
     {
         if (errorCount == 0 && semanticErrors == 0) {
-            printf("\n✓ Análisis completado exitosamente.\n");
-            printSymbolTable();
+            printf("\n  Análisis completado exitosamente.\n");
         } else {
-            printf("\n✗ Se encontraron %d errores sintácticos y %d errores semánticos.\n", 
+            printf("\n  Se encontraron %d errores sintácticos y %d errores semánticos.\n", 
                    errorCount, semanticErrors);
         }
     }
     | PACKAGE IDENTIFICADOR 
     {
         initSymbolTable();
-        printf("Iniciando análisis semántico...\n");
     }
     declaraciones_top
     {
         if (errorCount == 0 && semanticErrors == 0) {
-            printf("\n✓ Análisis completado exitosamente.\n");
-            printSymbolTable();
+            printf("\n  Análisis completado exitosamente.\n");
         } else {
-            printf("\n✗ Se encontraron %d errores sintácticos y %d errores semánticos.\n", 
+            printf("\n  Se encontraron %d errores sintácticos y %d errores semánticos.\n", 
                    errorCount, semanticErrors);
         }
     }
@@ -122,8 +122,8 @@ declaracion_top:
 type_decl:
     TYPE IDENTIFICADOR tipo
     {
-        Symbol *sym = insertSymbol($2, SYM_TYPE, $3, 
-                                   @1.first_line, @1.first_column);
+        insertSymbol($2, SYM_TYPE, $3, 
+            @1.first_line, @1.first_column);
         free($2);
     }
     ;
@@ -154,7 +154,7 @@ variable_top:
     }
     | VAR IDENTIFICADOR tipo
     {
-        Symbol *sym = insertSymbol($2, SYM_VARIABLE, $3, 
+        insertSymbol($2, SYM_VARIABLE, $3, 
                                    @2.first_line, @2.first_column);
         free($2);
     }
@@ -192,7 +192,7 @@ var_spec:
     }
     | IDENTIFICADOR tipo
     {
-        Symbol *sym = insertSymbol($1, SYM_VARIABLE, $2, 
+        insertSymbol($1, SYM_VARIABLE, $2, 
                                    @1.first_line, @1.first_column);
         free($1);
     }
@@ -273,40 +273,26 @@ funcion:
         currentFunction = insertSymbol($2, SYM_FUNCTION, TYPE_VOID, 
                                        @2.first_line, @2.first_column);
         hasReturnStatement = false;
-        enterScope();
     }
-    '(' parametros ')' tipo_retorno bloque
+    '(' parametros ')' opt_tipo_retorno bloque
     {
-        if (currentFunction) {
+        if (currentFunction && $7) {
             DataType retType = stringToDataType($7);
             setReturnType(currentFunction, retType);
-            
-            if (retType != TYPE_VOID && !hasReturnStatement) {
-                semanticWarning(@2.first_line, @2.first_column,
-                    "La función '%s' debe retornar un valor de tipo %s", 
-                    $2, $7);
-            }
+           
         }
-        exitScope();
         currentFunction = NULL;
         free($2);
         if ($7) free($7);
         $$ = currentFunction;
     }
-    | FUNC IDENTIFICADOR 
-    {
-        currentFunction = insertSymbol($2, SYM_FUNCTION, TYPE_VOID, 
-                                       @2.first_line, @2.first_column);
-        hasReturnStatement = false;
-        enterScope();
-    }
-    '(' parametros ')' bloque
-    {
-        exitScope();
-        currentFunction = NULL;
-        free($2);
-        $$ = currentFunction;
-    }
+    ;
+
+opt_tipo_retorno:
+    tipo_retorno
+    { $$ = $1; }
+    | /* vacío */
+    { $$ = NULL; }
     ;
 
 parametros:
@@ -385,7 +371,7 @@ variable:
     }
     | VAR IDENTIFICADOR tipo
     {
-        Symbol *sym = insertSymbol($2, SYM_VARIABLE, $3, 
+        insertSymbol($2, SYM_VARIABLE, $3, 
                                    @2.first_line, @2.first_column);
         free($2);
     }
@@ -652,14 +638,10 @@ expresion:
     {
         Symbol *sym = lookupSymbol($1);
         if (!sym) {
-            semanticError(@1.first_line, @1.first_column,
-                "Variable no declarada: '%s'", $1);
+          
             $$ = TYPE_UNKNOWN;
         } else {
-            if (!sym->initialized && sym->kind == SYM_VARIABLE) {
-                semanticWarning(@1.first_line, @1.first_column,
-                    "Variable '%s' podría no estar inicializada", $1);
-            }
+           
             $$ = sym->type;
         }
         free($1);
@@ -897,7 +879,6 @@ int main(int argc, char *argv[]) {
     extern void iniciarUbicaciones();
     iniciarUbicaciones();
 
-    printf("Iniciando análisis de %s...\n\n", argv[1]);
     yyparse();
     
     fclose(yyin);
