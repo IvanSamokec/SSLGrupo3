@@ -426,7 +426,7 @@ false {
 
 . {
     actualizarLocationsColumnas();
-    fprintf(stderr, "Error léxico <linea:%d columna:%d> Caracter no válido: '%s'\n", 
+    fprintf(stderr, "Error lexico <linea:%d columna:%d> Caracter no valido: '%s'\n", 
             yylloc.first_line, yylloc.first_column, yytext);
     errorCount++;
 }

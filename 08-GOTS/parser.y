@@ -71,9 +71,9 @@ programa:
     imports declaraciones_top
     {
         if (errorCount == 0 && semanticErrors == 0) {
-            printf("\n  Análisis completado exitosamente.\n");
+            printf("\n  Analisis completado exitosamente.\n");
         } else {
-            printf("\n  Se encontraron %d errores sintácticos y %d errores semánticos.\n", 
+            printf("\n  Se encontraron %d errores sintacticos y %d errores semanticos.\n", 
                    errorCount, semanticErrors);
         }
     }
@@ -84,9 +84,9 @@ programa:
     declaraciones_top
     {
         if (errorCount == 0 && semanticErrors == 0) {
-            printf("\n  Análisis completado exitosamente.\n");
+            printf("\n  Analisis completado exitosamente.\n");
         } else {
-            printf("\n  Se encontraron %d errores sintácticos y %d errores semánticos.\n", 
+            printf("\n  Se encontraron %d errores sintacticos y %d errores semanticos.\n", 
                    errorCount, semanticErrors);
         }
     }
@@ -109,7 +109,7 @@ import_list:
 
 declaraciones_top:
     declaraciones_top declaracion_top
-    | /* vacío */
+    | /* vacio */
     ;
 
 declaracion_top:
@@ -137,7 +137,7 @@ variable_top:
             setSymbolInitialized(sym);
             if (!areTypesCompatible($3, $5)) {
                 semanticError(@5.first_line, @5.first_column,
-                    "Tipo incompatible en inicialización de '%s': esperado %s, obtenido %s",
+                    "Tipo incompatible en inicializacion de '%s': esperado %s, obtenido %s",
                     $2, dataTypeToString($3), dataTypeToString($5));
             }
         }
@@ -164,7 +164,7 @@ variable_top:
 var_block:
     var_block var_spec
     | var_spec
-    | /* vacío */
+    | /* vacio */
     ;
 
 var_spec:
@@ -176,7 +176,7 @@ var_spec:
             setSymbolInitialized(sym);
             if (!areTypesCompatible($2, $4)) {
                 semanticError(@4.first_line, @4.first_column,
-                    "Tipo incompatible en inicialización de '%s'", $1);
+                    "Tipo incompatible en inicializacion de '%s'", $1);
             }
         }
         free($1);
@@ -227,7 +227,7 @@ constante_top:
 const_block:
     const_block const_spec
     | const_spec
-    | /* vacío */
+    | /* vacio */
     ;
 
 const_spec:
@@ -262,7 +262,7 @@ const_spec:
     | IDENTIFICADOR
     {
         semanticError(@1.first_line, @1.first_column,
-            "Las constantes deben tener tipo e inicialización: '%s'", $1);
+            "Las constantes deben tener tipo e inicializacion: '%s'", $1);
         free($1);
     }
     ;
@@ -291,13 +291,13 @@ funcion:
 opt_tipo_retorno:
     tipo_retorno
     { $$ = $1; }
-    | /* vacío */
+    | /* vacio */
     { $$ = NULL; }
     ;
 
 parametros:
     lista_parametros
-    | /* vacío */
+    | /* vacio */
     ;
 
 lista_parametros:
@@ -355,7 +355,7 @@ variable:
             setSymbolInitialized(sym);
             if (!areTypesCompatible($3, $5)) {
                 semanticError(@5.first_line, @5.first_column,
-                    "Tipo incompatible en inicialización de '%s'", $2);
+                    "Tipo incompatible en inicializacion de '%s'", $2);
             }
         }
         free($2);
@@ -462,7 +462,7 @@ bloque:
 
 sentencias:
     sentencias sentencia
-    | /* vacío */
+    | /* vacio */
     ;
 
 sentencia:
@@ -483,7 +483,7 @@ sentencia:
         hasReturnStatement = true;
         if (currentFunction && currentFunction->returnType != TYPE_VOID) {
             semanticError(@1.first_line, @1.first_column,
-                "La función debe retornar un valor de tipo %s",
+                "La funcion debe retornar un valor de tipo %s",
                 dataTypeToString(currentFunction->returnType));
         }
     }
@@ -491,7 +491,7 @@ sentencia:
     {
         if ($2 != TYPE_BOOL && $2 != TYPE_UNKNOWN) {
             semanticError(@2.first_line, @2.first_column,
-                "La condición del if debe ser de tipo bool");
+                "La condicion del if debe ser de tipo bool");
         }
     }
     bloque
@@ -499,7 +499,7 @@ sentencia:
     {
         if ($2 != TYPE_BOOL && $2 != TYPE_UNKNOWN) {
             semanticError(@2.first_line, @2.first_column,
-                "La condición del if debe ser de tipo bool");
+                "La condicion del if debe ser de tipo bool");
         }
     }
     bloque ELSE bloque
@@ -507,7 +507,7 @@ sentencia:
     {
         if ($2 != TYPE_BOOL && $2 != TYPE_UNKNOWN) {
             semanticError(@2.first_line, @2.first_column,
-                "La condición del if debe ser de tipo bool");
+                "La condicion del if debe ser de tipo bool");
         }
     }
     bloque ELSE sentencia
@@ -515,7 +515,7 @@ sentencia:
     {
         if ($2 != TYPE_BOOL && $2 != TYPE_UNKNOWN) {
             semanticError(@2.first_line, @2.first_column,
-                "La condición del for debe ser de tipo bool");
+                "La condicion del for debe ser de tipo bool");
         }
     }
     bloque
@@ -539,7 +539,7 @@ declaracion_corta:
     {
         if (isDeclaredInCurrentScope($1)) {
             semanticError(@1.first_line, @1.first_column,
-                "Redeclaración de '%s' con :=", $1);
+                "Redeclaracion de '%s' con :=", $1);
         } else {
             Symbol *sym = insertSymbol($1, SYM_VARIABLE, $3, 
                                        @1.first_line, @1.first_column);
@@ -560,42 +560,42 @@ asignacion:
     {
         if (!areTypesCompatible($1, $3)) {
             semanticError(@3.first_line, @3.first_column,
-                "Tipos incompatibles en asignación");
+                "Tipos incompatibles en asignacion");
         }
     }
     | expresion MAS_IGUAL expresion
     {
         if (!areTypesCompatible($1, $3)) {
             semanticError(@3.first_line, @3.first_column,
-                "Tipos incompatibles en operación +=");
+                "Tipos incompatibles en operacion +=");
         }
     }
     | expresion MENOS_IGUAL expresion
     {
         if (!areTypesCompatible($1, $3)) {
             semanticError(@3.first_line, @3.first_column,
-                "Tipos incompatibles en operación -=");
+                "Tipos incompatibles en operacion -=");
         }
     }
     | expresion POR_IGUAL expresion
     {
         if (!areTypesCompatible($1, $3)) {
             semanticError(@3.first_line, @3.first_column,
-                "Tipos incompatibles en operación *=");
+                "Tipos incompatibles en operacion *=");
         }
     }
     | expresion DIV_IGUAL expresion
     {
         if (!areTypesCompatible($1, $3)) {
             semanticError(@3.first_line, @3.first_column,
-                "Tipos incompatibles en operación /=");
+                "Tipos incompatibles en operacion /=");
         }
     }
     | expresion MOD_IGUAL expresion
     {
         if (!areTypesCompatible($1, $3)) {
             semanticError(@3.first_line, @3.first_column,
-                "Tipos incompatibles en operación %=");
+                "Tipos incompatibles en operacion %=");
         }
     }
     ;
@@ -609,18 +609,18 @@ inicializacion:
     | declaracion_corta_multiple
     | asignacion
     | asignacion_multiple
-    | /* vacío */
+    | /* vacio */
     ;
 
 condicion:
     expresion
-    | /* vacío */
+    | /* vacio */
     ;
 
 post_iteracion:
     expresion
     | asignacion
-    | /* vacío */
+    | /* vacio */
     ;
 
 casos:
@@ -679,7 +679,7 @@ expresion:
     {
         if (!areTypesCompatible($1, $3)) {
             semanticError(@2.first_line, @2.first_column,
-                "Tipos incompatibles en operación +");
+                "Tipos incompatibles en operacion +");
         }
         $$ = getResultType($1, $3, "+");
     }
@@ -687,7 +687,7 @@ expresion:
     {
         if (!areTypesCompatible($1, $3)) {
             semanticError(@2.first_line, @2.first_column,
-                "Tipos incompatibles en operación -");
+                "Tipos incompatibles en operacion -");
         }
         $$ = getResultType($1, $3, "-");
     }
@@ -695,7 +695,7 @@ expresion:
     {
         if (!areTypesCompatible($1, $3)) {
             semanticError(@2.first_line, @2.first_column,
-                "Tipos incompatibles en operación *");
+                "Tipos incompatibles en operacion *");
         }
         $$ = getResultType($1, $3, "*");
     }
@@ -703,7 +703,7 @@ expresion:
     {
         if (!areTypesCompatible($1, $3)) {
             semanticError(@2.first_line, @2.first_column,
-                "Tipos incompatibles en operación /");
+                "Tipos incompatibles en operacion /");
         }
         $$ = getResultType($1, $3, "/");
     }
@@ -767,7 +767,7 @@ expresion:
     {
         if ($2 != TYPE_INT && $2 != TYPE_FLOAT32 && $2 != TYPE_FLOAT64) {
             semanticError(@1.first_line, @1.first_column,
-                "El operador unario - requiere un operando numérico");
+                "El operador unario - requiere un operando numerico");
         }
         $$ = $2;
     }
@@ -775,7 +775,7 @@ expresion:
     {
         if ($2 != TYPE_INT && $2 != TYPE_FLOAT32 && $2 != TYPE_FLOAT64) {
             semanticError(@1.first_line, @1.first_column,
-                "El operador unario + requiere un operando numérico");
+                "El operador unario + requiere un operando numerico");
         }
         $$ = $2;
     }
@@ -783,7 +783,7 @@ expresion:
     {
         if ($1 != TYPE_INT && $1 != TYPE_FLOAT32 && $1 != TYPE_FLOAT64) {
             semanticError(@2.first_line, @2.first_column,
-                "El operador ++ requiere un operando numérico");
+                "El operador ++ requiere un operando numerico");
         }
         $$ = $1;
     }
@@ -791,7 +791,7 @@ expresion:
     {
         if ($1 != TYPE_INT && $1 != TYPE_FLOAT32 && $1 != TYPE_FLOAT64) {
             semanticError(@2.first_line, @2.first_column,
-                "El operador -- requiere un operando numérico");
+                "El operador -- requiere un operando numerico");
         }
         $$ = $1;
     }
@@ -799,7 +799,7 @@ expresion:
     {
         if ($2 != TYPE_INT && $2 != TYPE_FLOAT32 && $2 != TYPE_FLOAT64) {
             semanticError(@1.first_line, @1.first_column,
-                "El operador ++ requiere un operando numérico");
+                "El operador ++ requiere un operando numerico");
         }
         $$ = $2;
     }
@@ -807,7 +807,7 @@ expresion:
     {
         if ($2 != TYPE_INT && $2 != TYPE_FLOAT32 && $2 != TYPE_FLOAT64) {
             semanticError(@1.first_line, @1.first_column,
-                "El operador -- requiere un operando numérico");
+                "El operador -- requiere un operando numerico");
         }
         $$ = $2;
     }
@@ -819,7 +819,7 @@ expresion:
     {
         if ($3 != TYPE_INT) {
             semanticError(@3.first_line, @3.first_column,
-                "El índice del arreglo debe ser de tipo int");
+                "El indice del arreglo debe ser de tipo int");
         }
         $$ = $1;
     }
@@ -833,8 +833,11 @@ expresion:
         $$ = stringToDataType($1);
         free($1);
     }
-    | IDENTIFICADOR '(' expresion ')'
+    | IDENTIFICADOR '(' argumentos ')'
     {
+        /* Accept zero or more arguments for function calls
+           and treat result as unknown for now (could be refined
+           using symbol table / signature checking). */
         Symbol *funcSym = lookupSymbol($1);
         if (funcSym && funcSym->kind == SYM_FUNCTION) {
             $$ = funcSym->returnType;
@@ -847,7 +850,7 @@ expresion:
 
 argumentos:
     lista_argumentos
-    | /* vacío */
+    | /* vacio */
     ;
 
 lista_argumentos:
@@ -858,7 +861,7 @@ lista_argumentos:
 %%
 
 void yyerror(const char *s) {
-    fprintf(stderr, "Error sintáctico en línea %d, columna %d: %s\n", 
+    fprintf(stderr, "Error sintactico en linea %d, columna %d: %s\n", 
             yylloc.first_line, yylloc.first_column, s);
     errorCount++;
 }
