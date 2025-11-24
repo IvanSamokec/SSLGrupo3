@@ -23,6 +23,7 @@ void actualizarLocationsColumnas() {
 }
 
 extern int errorCount;
+int lexicalErrors = 0;
 %}
 
 DECIMAL         0|[1-9][0-9]*
@@ -428,7 +429,7 @@ false {
     actualizarLocationsColumnas();
     fprintf(stderr, "Error lexico <linea:%d columna:%d> Caracter no valido: '%s'\n", 
             yylloc.first_line, yylloc.first_column, yytext);
-    errorCount++;
+    lexicalErrors++;  
 }
 
 %%

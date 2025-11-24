@@ -3,7 +3,7 @@ package main
 var x int = 10
 var y float64
 
-func sumar(a int, b int)
+func sumar(a int, b int) 
     return a + b
 }
 
@@ -26,7 +26,7 @@ func main() {
         x = x + 1
     }
     
-    resultado = (x + y * 2
+    resultado = (x + y * 2)
     
     var a int = 5
     var b int

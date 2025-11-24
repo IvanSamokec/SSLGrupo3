@@ -1,0 +1,5573 @@
+Terminals unused in grammar
+
+    STRUCT
+
+
+Rules useless in parser due to conflicts
+
+   75 $@6: ε
+
+   77 $@7: ε
+
+
+State 28 conflicts: 1 shift/reduce
+State 30 conflicts: 1 shift/reduce
+State 45 conflicts: 1 shift/reduce
+State 52 conflicts: 1 shift/reduce
+State 166 conflicts: 1 shift/reduce
+State 172 conflicts: 14 shift/reduce
+State 185 conflicts: 5 shift/reduce
+State 191 conflicts: 2 reduce/reduce
+State 200 conflicts: 5 shift/reduce
+State 210 conflicts: 5 shift/reduce
+State 228 conflicts: 5 shift/reduce
+State 229 conflicts: 5 shift/reduce
+State 230 conflicts: 5 shift/reduce
+State 231 conflicts: 5 shift/reduce
+State 232 conflicts: 5 shift/reduce
+State 233 conflicts: 5 shift/reduce
+State 234 conflicts: 5 shift/reduce
+State 237 conflicts: 5 shift/reduce
+State 251 conflicts: 5 shift/reduce
+State 252 conflicts: 5 shift/reduce
+State 260 conflicts: 5 shift/reduce
+State 261 conflicts: 5 shift/reduce
+
+
+Grammar
+
+    0 $accept: programa $end
+
+    1 $@1: ε
+
+    2 programa: PACKAGE IDENTIFICADOR $@1 imports declaraciones_top
+
+    3 $@2: ε
+
+    4 programa: PACKAGE IDENTIFICADOR $@2 declaraciones_top
+
+    5 imports: imports import_stmt
+    6        | import_stmt
+
+    7 import_stmt: IMPORT CADENA
+    8            | IMPORT '(' import_list ')'
+
+    9 import_list: import_list CADENA
+   10            | CADENA
+
+   11 declaraciones_top: declaraciones_top declaracion_top
+   12                  | ε
+
+   13 declaracion_top: funcion
+   14                | variable_top
+   15                | constante_top
+   16                | type_decl
+
+   17 type_decl: TYPE IDENTIFICADOR tipo
+
+   18 variable_top: VAR IDENTIFICADOR tipo '=' expresion
+   19             | VAR IDENTIFICADOR '=' expresion
+   20             | VAR IDENTIFICADOR tipo
+   21             | VAR '(' var_block ')'
+
+   22 var_block: var_block var_spec
+   23          | var_spec
+   24          | ε
+
+   25 var_spec: IDENTIFICADOR tipo '=' expresion
+   26         | IDENTIFICADOR '=' expresion
+   27         | IDENTIFICADOR tipo
+
+   28 constante_top: CONST IDENTIFICADOR tipo '=' expresion
+   29              | CONST IDENTIFICADOR '=' expresion
+   30              | CONST '(' const_block ')'
+
+   31 const_block: const_block const_spec
+   32            | const_spec
+   33            | ε
+
+   34 const_spec: IDENTIFICADOR tipo '=' expresion
+   35           | IDENTIFICADOR '=' expresion
+   36           | IDENTIFICADOR tipo
+   37           | IDENTIFICADOR
+
+   38 $@3: ε
+
+   39 funcion: FUNC IDENTIFICADOR $@3 '(' parametros ')' opt_tipo_retorno bloque
+
+   40 opt_tipo_retorno: tipo_retorno
+   41                 | ε
+
+   42 parametros: lista_parametros
+   43           | ε
+
+   44 lista_parametros: lista_parametros ',' parametro
+   45                 | parametro
+
+   46 parametro: IDENTIFICADOR tipo
+   47          | IDENTIFICADOR ',' IDENTIFICADOR tipo
+
+   48 tipo_retorno: tipo
+   49             | '(' lista_tipos ')'
+
+   50 lista_tipos: lista_tipos ',' tipo
+   51            | tipo
+
+   52 variable: VAR IDENTIFICADOR tipo '=' expresion
+   53         | VAR IDENTIFICADOR '=' expresion
+   54         | VAR IDENTIFICADOR tipo
+   55         | VAR lista_ids tipo
+   56         | VAR lista_ids '=' lista_expresiones
+
+   57 lista_ids: lista_ids ',' IDENTIFICADOR
+   58          | IDENTIFICADOR ',' IDENTIFICADOR
+
+   59 lista_expresiones: lista_expresiones ',' expresion
+   60                  | expresion ',' expresion
+
+   61 constante: CONST IDENTIFICADOR tipo '=' expresion
+   62          | CONST IDENTIFICADOR '=' expresion
+
+   63 tipo: TIPO_DATO
+   64     | IDENTIFICADOR
+   65     | '[' ENTERO ']' tipo
+   66     | '[' ']' tipo
+
+   67 $@4: ε
+
+   68 bloque: '{' $@4 sentencias '}'
+
+   69 sentencias: sentencias sentencia
+   70           | ε
+
+   71 sentencia: RETURN expresion
+   72          | RETURN
+
+   73 $@5: ε
+
+   74 sentencia: IF expresion $@5 bloque
+
+   75 $@6: ε
+
+   76 sentencia: IF expresion $@6 bloque ELSE bloque
+
+   77 $@7: ε
+
+   78 sentencia: IF expresion $@7 bloque ELSE sentencia
+
+   79 $@8: ε
+
+   80 sentencia: FOR expresion $@8 bloque
+   81          | FOR bloque
+   82          | FOR inicializacion ';' condicion ';' post_iteracion bloque
+   83          | SWITCH expresion '{' casos '}'
+   84          | expresion
+   85          | declaracion_corta
+   86          | declaracion_corta_multiple
+   87          | asignacion
+   88          | asignacion_multiple
+   89          | variable
+   90          | constante
+   91          | BREAK
+   92          | CONTINUE
+   93          | bloque
+
+   94 declaracion_corta: IDENTIFICADOR DECLARACION_CORTA expresion
+
+   95 declaracion_corta_multiple: lista_ids DECLARACION_CORTA lista_expresiones
+
+   96 asignacion: expresion '=' expresion
+   97           | expresion MAS_IGUAL expresion
+   98           | expresion MENOS_IGUAL expresion
+   99           | expresion POR_IGUAL expresion
+  100           | expresion DIV_IGUAL expresion
+  101           | expresion MOD_IGUAL expresion
+
+  102 asignacion_multiple: lista_ids '=' lista_expresiones
+
+  103 inicializacion: declaracion_corta
+  104               | declaracion_corta_multiple
+  105               | asignacion
+  106               | asignacion_multiple
+  107               | ε
+
+  108 condicion: expresion
+  109          | ε
+
+  110 post_iteracion: expresion
+  111               | asignacion
+  112               | ε
+
+  113 casos: casos caso
+  114      | caso
+
+  115 caso: CASE expresion ':' sentencias
+  116     | DEFAULT ':' sentencias
+
+  117 expresion: IDENTIFICADOR
+  118          | ENTERO
+  119          | REAL
+  120          | CARACTER
+  121          | CADENA
+  122          | TRUE
+  123          | FALSE
+  124          | '(' expresion ')'
+  125          | expresion '+' expresion
+  126          | expresion '-' expresion
+  127          | expresion '*' expresion
+  128          | expresion '/' expresion
+  129          | expresion '%' expresion
+  130          | expresion IGUALDAD expresion
+  131          | expresion DIFERENTE expresion
+  132          | expresion '<' expresion
+  133          | expresion '>' expresion
+  134          | expresion MENOR_IGUAL expresion
+  135          | expresion MAYOR_IGUAL expresion
+  136          | expresion AND expresion
+  137          | expresion OR expresion
+  138          | '!' expresion
+  139          | '-' expresion
+  140          | '+' expresion
+  141          | expresion INCREMENTO
+  142          | expresion DECREMENTO
+  143          | INCREMENTO expresion
+  144          | DECREMENTO expresion
+  145          | expresion '(' argumentos ')'
+  146          | expresion '[' expresion ']'
+  147          | expresion '.' IDENTIFICADOR
+  148          | TIPO_DATO '(' expresion ')'
+  149          | IDENTIFICADOR '(' expresion ')'
+
+  150 argumentos: lista_argumentos
+  151           | ε
+
+  152 lista_argumentos: lista_argumentos ',' expresion
+  153                 | expresion
+
+
+Terminals, with rules where they appear
+
+    $end (0) 0
+    '!' (33) 138
+    '%' (37) 129
+    '(' (40) 8 21 30 39 49 124 145 148 149
+    ')' (41) 8 21 30 39 49 124 145 148 149
+    '*' (42) 127
+    '+' (43) 125 140
+    ',' (44) 44 47 50 57 58 59 60 152
+    '-' (45) 126 139
+    '.' (46) 147
+    '/' (47) 128
+    ':' (58) 115 116
+    ';' (59) 82
+    '<' (60) 132
+    '=' (61) 18 19 25 26 28 29 34 35 52 53 56 61 62 96 102
+    '>' (62) 133
+    '[' (91) 65 66 146
+    ']' (93) 65 66 146
+    '{' (123) 68 83
+    '}' (125) 68 83
+    error (256)
+    IDENTIFICADOR <cadena> (258) 2 4 17 18 19 20 25 26 27 28 29 34 35 36 37 39 46 47 52 53 54 57 58 61 62 64 94 117 147 149
+    TIPO_DATO <cadena> (259) 63 148
+    CADENA <cadena> (260) 7 9 10 121
+    ENTERO <ival> (261) 65 118
+    TRUE <ival> (262) 122
+    FALSE <ival> (263) 123
+    REAL <dval> (264) 119
+    CARACTER <cval> (265) 120
+    PACKAGE (266) 2 4
+    IMPORT (267) 7 8
+    FUNC (268) 39
+    VAR (269) 18 19 20 21 52 53 54 55 56
+    CONST (270) 28 29 30 61 62
+    TYPE (271) 17
+    STRUCT (272)
+    IF (273) 74 76 78
+    ELSE (274) 76 78
+    FOR (275) 80 81 82
+    SWITCH (276) 83
+    CASE (277) 115
+    DEFAULT (278) 116
+    RETURN (279) 71 72
+    BREAK (280) 91
+    CONTINUE (281) 92
+    DECLARACION_CORTA (282) 94 95
+    INCREMENTO (283) 141 143
+    DECREMENTO (284) 142 144
+    MAS_IGUAL (285) 97
+    MENOS_IGUAL (286) 98
+    POR_IGUAL (287) 99
+    DIV_IGUAL (288) 100
+    MOD_IGUAL (289) 101
+    IGUALDAD (290) 130
+    DIFERENTE (291) 131
+    MENOR_IGUAL (292) 134
+    MAYOR_IGUAL (293) 135
+    AND (294) 136
+    OR (295) 137
+    UNARIO (296)
+
+
+Nonterminals, with rules where they appear
+
+    $accept (61)
+        on left: 0
+    programa (62)
+        on left: 2 4
+        on right: 0
+    $@1 (63)
+        on left: 1
+        on right: 2
+    $@2 (64)
+        on left: 3
+        on right: 4
+    imports (65)
+        on left: 5 6
+        on right: 2 5
+    import_stmt (66)
+        on left: 7 8
+        on right: 5 6
+    import_list (67)
+        on left: 9 10
+        on right: 8 9
+    declaraciones_top (68)
+        on left: 11 12
+        on right: 2 4 11
+    declaracion_top (69)
+        on left: 13 14 15 16
+        on right: 11
+    type_decl (70)
+        on left: 17
+        on right: 16
+    variable_top (71)
+        on left: 18 19 20 21
+        on right: 14
+    var_block (72)
+        on left: 22 23 24
+        on right: 21 22
+    var_spec (73)
+        on left: 25 26 27
+        on right: 22 23
+    constante_top (74)
+        on left: 28 29 30
+        on right: 15
+    const_block (75)
+        on left: 31 32 33
+        on right: 30 31
+    const_spec (76)
+        on left: 34 35 36 37
+        on right: 31 32
+    funcion <simbolo> (77)
+        on left: 39
+        on right: 13
+    $@3 (78)
+        on left: 38
+        on right: 39
+    opt_tipo_retorno <cadena> (79)
+        on left: 40 41
+        on right: 39
+    parametros (80)
+        on left: 42 43
+        on right: 39
+    lista_parametros (81)
+        on left: 44 45
+        on right: 42 44
+    parametro (82)
+        on left: 46 47
+        on right: 44 45
+    tipo_retorno <cadena> (83)
+        on left: 48 49
+        on right: 40
+    lista_tipos (84)
+        on left: 50 51
+        on right: 49 50
+    variable (85)
+        on left: 52 53 54 55 56
+        on right: 89
+    lista_ids (86)
+        on left: 57 58
+        on right: 55 56 57 95 102
+    lista_expresiones (87)
+        on left: 59 60
+        on right: 56 59 95 102
+    constante (88)
+        on left: 61 62
+        on right: 90
+    tipo <tipo> (89)
+        on left: 63 64 65 66
+        on right: 17 18 20 25 27 28 34 36 46 47 48 50 51 52 54 55 61 65 66
+    bloque (90)
+        on left: 68
+        on right: 39 74 76 78 80 81 82 93
+    $@4 (91)
+        on left: 67
+        on right: 68
+    sentencias (92)
+        on left: 69 70
+        on right: 68 69 115 116
+    sentencia (93)
+        on left: 71 72 74 76 78 80 81 82 83 84 85 86 87 88 89 90 91 92 93
+        on right: 69 78
+    $@5 (94)
+        on left: 73
+        on right: 74
+    $@6 (95)
+        on left: 75
+        on right: 76
+    $@7 (96)
+        on left: 77
+        on right: 78
+    $@8 (97)
+        on left: 79
+        on right: 80
+    declaracion_corta (98)
+        on left: 94
+        on right: 85 103
+    declaracion_corta_multiple (99)
+        on left: 95
+        on right: 86 104
+    asignacion (100)
+        on left: 96 97 98 99 100 101
+        on right: 87 105 111
+    asignacion_multiple (101)
+        on left: 102
+        on right: 88 106
+    inicializacion (102)
+        on left: 103 104 105 106 107
+        on right: 82
+    condicion (103)
+        on left: 108 109
+        on right: 82
+    post_iteracion (104)
+        on left: 110 111 112
+        on right: 82
+    casos (105)
+        on left: 113 114
+        on right: 83 113
+    caso (106)
+        on left: 115 116
+        on right: 113 114
+    expresion <tipo> (107)
+        on left: 117 118 119 120 121 122 123 124 125 126 127 128 129 130 131 132 133 134 135 136 137 138 139 140 141 142 143 144 145 146 147 148 149
+        on right: 18 19 25 26 28 29 34 35 52 53 59 60 61 62 71 74 76 78 80 83 84 94 96 97 98 99 100 101 108 110 115 124 125 126 127 128 129 130 131 132 133 134 135 136 137 138 139 140 141 142 143 144 145 146 147 148 149 152 153
+    argumentos (108)
+        on left: 150 151
+        on right: 145
+    lista_argumentos (109)
+        on left: 152 153
+        on right: 150 152
+
+
+State 0
+
+    0 $accept: • programa $end
+
+    PACKAGE  shift, and go to state 1
+
+    programa  go to state 2
+
+
+State 1
+
+    2 programa: PACKAGE • IDENTIFICADOR $@1 imports declaraciones_top
+    4         | PACKAGE • IDENTIFICADOR $@2 declaraciones_top
+
+    IDENTIFICADOR  shift, and go to state 3
+
+
+State 2
+
+    0 $accept: programa • $end
+
+    $end  shift, and go to state 4
+
+
+State 3
+
+    2 programa: PACKAGE IDENTIFICADOR • $@1 imports declaraciones_top
+    4         | PACKAGE IDENTIFICADOR • $@2 declaraciones_top
+
+    IMPORT    reduce using rule 1 ($@1)
+    $default  reduce using rule 3 ($@2)
+
+    $@1  go to state 5
+    $@2  go to state 6
+
+
+State 4
+
+    0 $accept: programa $end •
+
+    $default  accept
+
+
+State 5
+
+    2 programa: PACKAGE IDENTIFICADOR $@1 • imports declaraciones_top
+
+    IMPORT  shift, and go to state 7
+
+    imports      go to state 8
+    import_stmt  go to state 9
+
+
+State 6
+
+    4 programa: PACKAGE IDENTIFICADOR $@2 • declaraciones_top
+
+    $default  reduce using rule 12 (declaraciones_top)
+
+    declaraciones_top  go to state 10
+
+
+State 7
+
+    7 import_stmt: IMPORT • CADENA
+    8            | IMPORT • '(' import_list ')'
+
+    CADENA  shift, and go to state 11
+    '('     shift, and go to state 12
+
+
+State 8
+
+    2 programa: PACKAGE IDENTIFICADOR $@1 imports • declaraciones_top
+    5 imports: imports • import_stmt
+
+    IMPORT  shift, and go to state 7
+
+    $default  reduce using rule 12 (declaraciones_top)
+
+    import_stmt        go to state 13
+    declaraciones_top  go to state 14
+
+
+State 9
+
+    6 imports: import_stmt •
+
+    $default  reduce using rule 6 (imports)
+
+
+State 10
+
+    4 programa: PACKAGE IDENTIFICADOR $@2 declaraciones_top •
+   11 declaraciones_top: declaraciones_top • declaracion_top
+
+    FUNC   shift, and go to state 15
+    VAR    shift, and go to state 16
+    CONST  shift, and go to state 17
+    TYPE   shift, and go to state 18
+
+    $default  reduce using rule 4 (programa)
+
+    declaracion_top  go to state 19
+    type_decl        go to state 20
+    variable_top     go to state 21
+    constante_top    go to state 22
+    funcion          go to state 23
+
+
+State 11
+
+    7 import_stmt: IMPORT CADENA •
+
+    $default  reduce using rule 7 (import_stmt)
+
+
+State 12
+
+    8 import_stmt: IMPORT '(' • import_list ')'
+
+    CADENA  shift, and go to state 24
+
+    import_list  go to state 25
+
+
+State 13
+
+    5 imports: imports import_stmt •
+
+    $default  reduce using rule 5 (imports)
+
+
+State 14
+
+    2 programa: PACKAGE IDENTIFICADOR $@1 imports declaraciones_top •
+   11 declaraciones_top: declaraciones_top • declaracion_top
+
+    FUNC   shift, and go to state 15
+    VAR    shift, and go to state 16
+    CONST  shift, and go to state 17
+    TYPE   shift, and go to state 18
+
+    $default  reduce using rule 2 (programa)
+
+    declaracion_top  go to state 19
+    type_decl        go to state 20
+    variable_top     go to state 21
+    constante_top    go to state 22
+    funcion          go to state 23
+
+
+State 15
+
+   39 funcion: FUNC • IDENTIFICADOR $@3 '(' parametros ')' opt_tipo_retorno bloque
+
+    IDENTIFICADOR  shift, and go to state 26
+
+
+State 16
+
+   18 variable_top: VAR • IDENTIFICADOR tipo '=' expresion
+   19             | VAR • IDENTIFICADOR '=' expresion
+   20             | VAR • IDENTIFICADOR tipo
+   21             | VAR • '(' var_block ')'
+
+    IDENTIFICADOR  shift, and go to state 27
+    '('            shift, and go to state 28
+
+
+State 17
+
+   28 constante_top: CONST • IDENTIFICADOR tipo '=' expresion
+   29              | CONST • IDENTIFICADOR '=' expresion
+   30              | CONST • '(' const_block ')'
+
+    IDENTIFICADOR  shift, and go to state 29
+    '('            shift, and go to state 30
+
+
+State 18
+
+   17 type_decl: TYPE • IDENTIFICADOR tipo
+
+    IDENTIFICADOR  shift, and go to state 31
+
+
+State 19
+
+   11 declaraciones_top: declaraciones_top declaracion_top •
+
+    $default  reduce using rule 11 (declaraciones_top)
+
+
+State 20
+
+   16 declaracion_top: type_decl •
+
+    $default  reduce using rule 16 (declaracion_top)
+
+
+State 21
+
+   14 declaracion_top: variable_top •
+
+    $default  reduce using rule 14 (declaracion_top)
+
+
+State 22
+
+   15 declaracion_top: constante_top •
+
+    $default  reduce using rule 15 (declaracion_top)
+
+
+State 23
+
+   13 declaracion_top: funcion •
+
+    $default  reduce using rule 13 (declaracion_top)
+
+
+State 24
+
+   10 import_list: CADENA •
+
+    $default  reduce using rule 10 (import_list)
+
+
+State 25
+
+    8 import_stmt: IMPORT '(' import_list • ')'
+    9 import_list: import_list • CADENA
+
+    CADENA  shift, and go to state 32
+    ')'     shift, and go to state 33
+
+
+State 26
+
+   39 funcion: FUNC IDENTIFICADOR • $@3 '(' parametros ')' opt_tipo_retorno bloque
+
+    $default  reduce using rule 38 ($@3)
+
+    $@3  go to state 34
+
+
+State 27
+
+   18 variable_top: VAR IDENTIFICADOR • tipo '=' expresion
+   19             | VAR IDENTIFICADOR • '=' expresion
+   20             | VAR IDENTIFICADOR • tipo
+
+    IDENTIFICADOR  shift, and go to state 35
+    TIPO_DATO      shift, and go to state 36
+    '['            shift, and go to state 37
+    '='            shift, and go to state 38
+
+    tipo  go to state 39
+
+
+State 28
+
+   21 variable_top: VAR '(' • var_block ')'
+
+    IDENTIFICADOR  shift, and go to state 40
+
+    IDENTIFICADOR  [reduce using rule 24 (var_block)]
+    $default       reduce using rule 24 (var_block)
+
+    var_block  go to state 41
+    var_spec   go to state 42
+
+
+State 29
+
+   28 constante_top: CONST IDENTIFICADOR • tipo '=' expresion
+   29              | CONST IDENTIFICADOR • '=' expresion
+
+    IDENTIFICADOR  shift, and go to state 35
+    TIPO_DATO      shift, and go to state 36
+    '['            shift, and go to state 37
+    '='            shift, and go to state 43
+
+    tipo  go to state 44
+
+
+State 30
+
+   30 constante_top: CONST '(' • const_block ')'
+
+    IDENTIFICADOR  shift, and go to state 45
+
+    IDENTIFICADOR  [reduce using rule 33 (const_block)]
+    $default       reduce using rule 33 (const_block)
+
+    const_block  go to state 46
+    const_spec   go to state 47
+
+
+State 31
+
+   17 type_decl: TYPE IDENTIFICADOR • tipo
+
+    IDENTIFICADOR  shift, and go to state 35
+    TIPO_DATO      shift, and go to state 36
+    '['            shift, and go to state 37
+
+    tipo  go to state 48
+
+
+State 32
+
+    9 import_list: import_list CADENA •
+
+    $default  reduce using rule 9 (import_list)
+
+
+State 33
+
+    8 import_stmt: IMPORT '(' import_list ')' •
+
+    $default  reduce using rule 8 (import_stmt)
+
+
+State 34
+
+   39 funcion: FUNC IDENTIFICADOR $@3 • '(' parametros ')' opt_tipo_retorno bloque
+
+    '('  shift, and go to state 49
+
+
+State 35
+
+   64 tipo: IDENTIFICADOR •
+
+    $default  reduce using rule 64 (tipo)
+
+
+State 36
+
+   63 tipo: TIPO_DATO •
+
+    $default  reduce using rule 63 (tipo)
+
+
+State 37
+
+   65 tipo: '[' • ENTERO ']' tipo
+   66     | '[' • ']' tipo
+
+    ENTERO  shift, and go to state 50
+    ']'     shift, and go to state 51
+
+
+State 38
+
+   19 variable_top: VAR IDENTIFICADOR '=' • expresion
+
+    IDENTIFICADOR  shift, and go to state 52
+    TIPO_DATO      shift, and go to state 53
+    CADENA         shift, and go to state 54
+    ENTERO         shift, and go to state 55
+    TRUE           shift, and go to state 56
+    FALSE          shift, and go to state 57
+    REAL           shift, and go to state 58
+    CARACTER       shift, and go to state 59
+    INCREMENTO     shift, and go to state 60
+    DECREMENTO     shift, and go to state 61
+    '+'            shift, and go to state 62
+    '-'            shift, and go to state 63
+    '!'            shift, and go to state 64
+    '('            shift, and go to state 65
+
+    expresion  go to state 66
+
+
+State 39
+
+   18 variable_top: VAR IDENTIFICADOR tipo • '=' expresion
+   20             | VAR IDENTIFICADOR tipo •
+
+    '='  shift, and go to state 67
+
+    $default  reduce using rule 20 (variable_top)
+
+
+State 40
+
+   25 var_spec: IDENTIFICADOR • tipo '=' expresion
+   26         | IDENTIFICADOR • '=' expresion
+   27         | IDENTIFICADOR • tipo
+
+    IDENTIFICADOR  shift, and go to state 35
+    TIPO_DATO      shift, and go to state 36
+    '['            shift, and go to state 37
+    '='            shift, and go to state 68
+
+    tipo  go to state 69
+
+
+State 41
+
+   21 variable_top: VAR '(' var_block • ')'
+   22 var_block: var_block • var_spec
+
+    IDENTIFICADOR  shift, and go to state 40
+    ')'            shift, and go to state 70
+
+    var_spec  go to state 71
+
+
+State 42
+
+   23 var_block: var_spec •
+
+    $default  reduce using rule 23 (var_block)
+
+
+State 43
+
+   29 constante_top: CONST IDENTIFICADOR '=' • expresion
+
+    IDENTIFICADOR  shift, and go to state 52
+    TIPO_DATO      shift, and go to state 53
+    CADENA         shift, and go to state 54
+    ENTERO         shift, and go to state 55
+    TRUE           shift, and go to state 56
+    FALSE          shift, and go to state 57
+    REAL           shift, and go to state 58
+    CARACTER       shift, and go to state 59
+    INCREMENTO     shift, and go to state 60
+    DECREMENTO     shift, and go to state 61
+    '+'            shift, and go to state 62
+    '-'            shift, and go to state 63
+    '!'            shift, and go to state 64
+    '('            shift, and go to state 65
+
+    expresion  go to state 72
+
+
+State 44
+
+   28 constante_top: CONST IDENTIFICADOR tipo • '=' expresion
+
+    '='  shift, and go to state 73
+
+
+State 45
+
+   34 const_spec: IDENTIFICADOR • tipo '=' expresion
+   35           | IDENTIFICADOR • '=' expresion
+   36           | IDENTIFICADOR • tipo
+   37           | IDENTIFICADOR •
+
+    IDENTIFICADOR  shift, and go to state 35
+    TIPO_DATO      shift, and go to state 36
+    '['            shift, and go to state 37
+    '='            shift, and go to state 74
+
+    IDENTIFICADOR  [reduce using rule 37 (const_spec)]
+    $default       reduce using rule 37 (const_spec)
+
+    tipo  go to state 75
+
+
+State 46
+
+   30 constante_top: CONST '(' const_block • ')'
+   31 const_block: const_block • const_spec
+
+    IDENTIFICADOR  shift, and go to state 45
+    ')'            shift, and go to state 76
+
+    const_spec  go to state 77
+
+
+State 47
+
+   32 const_block: const_spec •
+
+    $default  reduce using rule 32 (const_block)
+
+
+State 48
+
+   17 type_decl: TYPE IDENTIFICADOR tipo •
+
+    $default  reduce using rule 17 (type_decl)
+
+
+State 49
+
+   39 funcion: FUNC IDENTIFICADOR $@3 '(' • parametros ')' opt_tipo_retorno bloque
+
+    IDENTIFICADOR  shift, and go to state 78
+
+    $default  reduce using rule 43 (parametros)
+
+    parametros        go to state 79
+    lista_parametros  go to state 80
+    parametro         go to state 81
+
+
+State 50
+
+   65 tipo: '[' ENTERO • ']' tipo
+
+    ']'  shift, and go to state 82
+
+
+State 51
+
+   66 tipo: '[' ']' • tipo
+
+    IDENTIFICADOR  shift, and go to state 35
+    TIPO_DATO      shift, and go to state 36
+    '['            shift, and go to state 37
+
+    tipo  go to state 83
+
+
+State 52
+
+  117 expresion: IDENTIFICADOR •
+  149          | IDENTIFICADOR • '(' expresion ')'
+
+    '('  shift, and go to state 84
+
+    '('       [reduce using rule 117 (expresion)]
+    $default  reduce using rule 117 (expresion)
+
+
+State 53
+
+  148 expresion: TIPO_DATO • '(' expresion ')'
+
+    '('  shift, and go to state 85
+
+
+State 54
+
+  121 expresion: CADENA •
+
+    $default  reduce using rule 121 (expresion)
+
+
+State 55
+
+  118 expresion: ENTERO •
+
+    $default  reduce using rule 118 (expresion)
+
+
+State 56
+
+  122 expresion: TRUE •
+
+    $default  reduce using rule 122 (expresion)
+
+
+State 57
+
+  123 expresion: FALSE •
+
+    $default  reduce using rule 123 (expresion)
+
+
+State 58
+
+  119 expresion: REAL •
+
+    $default  reduce using rule 119 (expresion)
+
+
+State 59
+
+  120 expresion: CARACTER •
+
+    $default  reduce using rule 120 (expresion)
+
+
+State 60
+
+  143 expresion: INCREMENTO • expresion
+
+    IDENTIFICADOR  shift, and go to state 52
+    TIPO_DATO      shift, and go to state 53
+    CADENA         shift, and go to state 54
+    ENTERO         shift, and go to state 55
+    TRUE           shift, and go to state 56
+    FALSE          shift, and go to state 57
+    REAL           shift, and go to state 58
+    CARACTER       shift, and go to state 59
+    INCREMENTO     shift, and go to state 60
+    DECREMENTO     shift, and go to state 61
+    '+'            shift, and go to state 62
+    '-'            shift, and go to state 63
+    '!'            shift, and go to state 64
+    '('            shift, and go to state 65
+
+    expresion  go to state 86
+
+
+State 61
+
+  144 expresion: DECREMENTO • expresion
+
+    IDENTIFICADOR  shift, and go to state 52
+    TIPO_DATO      shift, and go to state 53
+    CADENA         shift, and go to state 54
+    ENTERO         shift, and go to state 55
+    TRUE           shift, and go to state 56
+    FALSE          shift, and go to state 57
+    REAL           shift, and go to state 58
+    CARACTER       shift, and go to state 59
+    INCREMENTO     shift, and go to state 60
+    DECREMENTO     shift, and go to state 61
+    '+'            shift, and go to state 62
+    '-'            shift, and go to state 63
+    '!'            shift, and go to state 64
+    '('            shift, and go to state 65
+
+    expresion  go to state 87
+
+
+State 62
+
+  140 expresion: '+' • expresion
+
+    IDENTIFICADOR  shift, and go to state 52
+    TIPO_DATO      shift, and go to state 53
+    CADENA         shift, and go to state 54
+    ENTERO         shift, and go to state 55
+    TRUE           shift, and go to state 56
+    FALSE          shift, and go to state 57
+    REAL           shift, and go to state 58
+    CARACTER       shift, and go to state 59
+    INCREMENTO     shift, and go to state 60
+    DECREMENTO     shift, and go to state 61
+    '+'            shift, and go to state 62
+    '-'            shift, and go to state 63
+    '!'            shift, and go to state 64
+    '('            shift, and go to state 65
+
+    expresion  go to state 88
+
+
+State 63
+
+  139 expresion: '-' • expresion
+
+    IDENTIFICADOR  shift, and go to state 52
+    TIPO_DATO      shift, and go to state 53
+    CADENA         shift, and go to state 54
+    ENTERO         shift, and go to state 55
+    TRUE           shift, and go to state 56
+    FALSE          shift, and go to state 57
+    REAL           shift, and go to state 58
+    CARACTER       shift, and go to state 59
+    INCREMENTO     shift, and go to state 60
+    DECREMENTO     shift, and go to state 61
+    '+'            shift, and go to state 62
+    '-'            shift, and go to state 63
+    '!'            shift, and go to state 64
+    '('            shift, and go to state 65
+
+    expresion  go to state 89
+
+
+State 64
+
+  138 expresion: '!' • expresion
+
+    IDENTIFICADOR  shift, and go to state 52
+    TIPO_DATO      shift, and go to state 53
+    CADENA         shift, and go to state 54
+    ENTERO         shift, and go to state 55
+    TRUE           shift, and go to state 56
+    FALSE          shift, and go to state 57
+    REAL           shift, and go to state 58
+    CARACTER       shift, and go to state 59
+    INCREMENTO     shift, and go to state 60
+    DECREMENTO     shift, and go to state 61
+    '+'            shift, and go to state 62
+    '-'            shift, and go to state 63
+    '!'            shift, and go to state 64
+    '('            shift, and go to state 65
+
+    expresion  go to state 90
+
+
+State 65
+
+  124 expresion: '(' • expresion ')'
+
+    IDENTIFICADOR  shift, and go to state 52
+    TIPO_DATO      shift, and go to state 53
+    CADENA         shift, and go to state 54
+    ENTERO         shift, and go to state 55
+    TRUE           shift, and go to state 56
+    FALSE          shift, and go to state 57
+    REAL           shift, and go to state 58
+    CARACTER       shift, and go to state 59
+    INCREMENTO     shift, and go to state 60
+    DECREMENTO     shift, and go to state 61
+    '+'            shift, and go to state 62
+    '-'            shift, and go to state 63
+    '!'            shift, and go to state 64
+    '('            shift, and go to state 65
+
+    expresion  go to state 91
+
+
+State 66
+
+   19 variable_top: VAR IDENTIFICADOR '=' expresion •
+  125 expresion: expresion • '+' expresion
+  126          | expresion • '-' expresion
+  127          | expresion • '*' expresion
+  128          | expresion • '/' expresion
+  129          | expresion • '%' expresion
+  130          | expresion • IGUALDAD expresion
+  131          | expresion • DIFERENTE expresion
+  132          | expresion • '<' expresion
+  133          | expresion • '>' expresion
+  134          | expresion • MENOR_IGUAL expresion
+  135          | expresion • MAYOR_IGUAL expresion
+  136          | expresion • AND expresion
+  137          | expresion • OR expresion
+  141          | expresion • INCREMENTO
+  142          | expresion • DECREMENTO
+  145          | expresion • '(' argumentos ')'
+  146          | expresion • '[' expresion ']'
+  147          | expresion • '.' IDENTIFICADOR
+
+    INCREMENTO   shift, and go to state 92
+    DECREMENTO   shift, and go to state 93
+    IGUALDAD     shift, and go to state 94
+    DIFERENTE    shift, and go to state 95
+    MENOR_IGUAL  shift, and go to state 96
+    MAYOR_IGUAL  shift, and go to state 97
+    AND          shift, and go to state 98
+    OR           shift, and go to state 99
+    '<'          shift, and go to state 100
+    '>'          shift, and go to state 101
+    '+'          shift, and go to state 102
+    '-'          shift, and go to state 103
+    '*'          shift, and go to state 104
+    '/'          shift, and go to state 105
+    '%'          shift, and go to state 106
+    '.'          shift, and go to state 107
+    '('          shift, and go to state 108
+    '['          shift, and go to state 109
+
+    $default  reduce using rule 19 (variable_top)
+
+
+State 67
+
+   18 variable_top: VAR IDENTIFICADOR tipo '=' • expresion
+
+    IDENTIFICADOR  shift, and go to state 52
+    TIPO_DATO      shift, and go to state 53
+    CADENA         shift, and go to state 54
+    ENTERO         shift, and go to state 55
+    TRUE           shift, and go to state 56
+    FALSE          shift, and go to state 57
+    REAL           shift, and go to state 58
+    CARACTER       shift, and go to state 59
+    INCREMENTO     shift, and go to state 60
+    DECREMENTO     shift, and go to state 61
+    '+'            shift, and go to state 62
+    '-'            shift, and go to state 63
+    '!'            shift, and go to state 64
+    '('            shift, and go to state 65
+
+    expresion  go to state 110
+
+
+State 68
+
+   26 var_spec: IDENTIFICADOR '=' • expresion
+
+    IDENTIFICADOR  shift, and go to state 52
+    TIPO_DATO      shift, and go to state 53
+    CADENA         shift, and go to state 54
+    ENTERO         shift, and go to state 55
+    TRUE           shift, and go to state 56
+    FALSE          shift, and go to state 57
+    REAL           shift, and go to state 58
+    CARACTER       shift, and go to state 59
+    INCREMENTO     shift, and go to state 60
+    DECREMENTO     shift, and go to state 61
+    '+'            shift, and go to state 62
+    '-'            shift, and go to state 63
+    '!'            shift, and go to state 64
+    '('            shift, and go to state 65
+
+    expresion  go to state 111
+
+
+State 69
+
+   25 var_spec: IDENTIFICADOR tipo • '=' expresion
+   27         | IDENTIFICADOR tipo •
+
+    '='  shift, and go to state 112
+
+    $default  reduce using rule 27 (var_spec)
+
+
+State 70
+
+   21 variable_top: VAR '(' var_block ')' •
+
+    $default  reduce using rule 21 (variable_top)
+
+
+State 71
+
+   22 var_block: var_block var_spec •
+
+    $default  reduce using rule 22 (var_block)
+
+
+State 72
+
+   29 constante_top: CONST IDENTIFICADOR '=' expresion •
+  125 expresion: expresion • '+' expresion
+  126          | expresion • '-' expresion
+  127          | expresion • '*' expresion
+  128          | expresion • '/' expresion
+  129          | expresion • '%' expresion
+  130          | expresion • IGUALDAD expresion
+  131          | expresion • DIFERENTE expresion
+  132          | expresion • '<' expresion
+  133          | expresion • '>' expresion
+  134          | expresion • MENOR_IGUAL expresion
+  135          | expresion • MAYOR_IGUAL expresion
+  136          | expresion • AND expresion
+  137          | expresion • OR expresion
+  141          | expresion • INCREMENTO
+  142          | expresion • DECREMENTO
+  145          | expresion • '(' argumentos ')'
+  146          | expresion • '[' expresion ']'
+  147          | expresion • '.' IDENTIFICADOR
+
+    INCREMENTO   shift, and go to state 92
+    DECREMENTO   shift, and go to state 93
+    IGUALDAD     shift, and go to state 94
+    DIFERENTE    shift, and go to state 95
+    MENOR_IGUAL  shift, and go to state 96
+    MAYOR_IGUAL  shift, and go to state 97
+    AND          shift, and go to state 98
+    OR           shift, and go to state 99
+    '<'          shift, and go to state 100
+    '>'          shift, and go to state 101
+    '+'          shift, and go to state 102
+    '-'          shift, and go to state 103
+    '*'          shift, and go to state 104
+    '/'          shift, and go to state 105
+    '%'          shift, and go to state 106
+    '.'          shift, and go to state 107
+    '('          shift, and go to state 108
+    '['          shift, and go to state 109
+
+    $default  reduce using rule 29 (constante_top)
+
+
+State 73
+
+   28 constante_top: CONST IDENTIFICADOR tipo '=' • expresion
+
+    IDENTIFICADOR  shift, and go to state 52
+    TIPO_DATO      shift, and go to state 53
+    CADENA         shift, and go to state 54
+    ENTERO         shift, and go to state 55
+    TRUE           shift, and go to state 56
+    FALSE          shift, and go to state 57
+    REAL           shift, and go to state 58
+    CARACTER       shift, and go to state 59
+    INCREMENTO     shift, and go to state 60
+    DECREMENTO     shift, and go to state 61
+    '+'            shift, and go to state 62
+    '-'            shift, and go to state 63
+    '!'            shift, and go to state 64
+    '('            shift, and go to state 65
+
+    expresion  go to state 113
+
+
+State 74
+
+   35 const_spec: IDENTIFICADOR '=' • expresion
+
+    IDENTIFICADOR  shift, and go to state 52
+    TIPO_DATO      shift, and go to state 53
+    CADENA         shift, and go to state 54
+    ENTERO         shift, and go to state 55
+    TRUE           shift, and go to state 56
+    FALSE          shift, and go to state 57
+    REAL           shift, and go to state 58
+    CARACTER       shift, and go to state 59
+    INCREMENTO     shift, and go to state 60
+    DECREMENTO     shift, and go to state 61
+    '+'            shift, and go to state 62
+    '-'            shift, and go to state 63
+    '!'            shift, and go to state 64
+    '('            shift, and go to state 65
+
+    expresion  go to state 114
+
+
+State 75
+
+   34 const_spec: IDENTIFICADOR tipo • '=' expresion
+   36           | IDENTIFICADOR tipo •
+
+    '='  shift, and go to state 115
+
+    $default  reduce using rule 36 (const_spec)
+
+
+State 76
+
+   30 constante_top: CONST '(' const_block ')' •
+
+    $default  reduce using rule 30 (constante_top)
+
+
+State 77
+
+   31 const_block: const_block const_spec •
+
+    $default  reduce using rule 31 (const_block)
+
+
+State 78
+
+   46 parametro: IDENTIFICADOR • tipo
+   47          | IDENTIFICADOR • ',' IDENTIFICADOR tipo
+
+    IDENTIFICADOR  shift, and go to state 35
+    TIPO_DATO      shift, and go to state 36
+    '['            shift, and go to state 37
+    ','            shift, and go to state 116
+
+    tipo  go to state 117
+
+
+State 79
+
+   39 funcion: FUNC IDENTIFICADOR $@3 '(' parametros • ')' opt_tipo_retorno bloque
+
+    ')'  shift, and go to state 118
+
+
+State 80
+
+   42 parametros: lista_parametros •
+   44 lista_parametros: lista_parametros • ',' parametro
+
+    ','  shift, and go to state 119
+
+    $default  reduce using rule 42 (parametros)
+
+
+State 81
+
+   45 lista_parametros: parametro •
+
+    $default  reduce using rule 45 (lista_parametros)
+
+
+State 82
+
+   65 tipo: '[' ENTERO ']' • tipo
+
+    IDENTIFICADOR  shift, and go to state 35
+    TIPO_DATO      shift, and go to state 36
+    '['            shift, and go to state 37
+
+    tipo  go to state 120
+
+
+State 83
+
+   66 tipo: '[' ']' tipo •
+
+    $default  reduce using rule 66 (tipo)
+
+
+State 84
+
+  149 expresion: IDENTIFICADOR '(' • expresion ')'
+
+    IDENTIFICADOR  shift, and go to state 52
+    TIPO_DATO      shift, and go to state 53
+    CADENA         shift, and go to state 54
+    ENTERO         shift, and go to state 55
+    TRUE           shift, and go to state 56
+    FALSE          shift, and go to state 57
+    REAL           shift, and go to state 58
+    CARACTER       shift, and go to state 59
+    INCREMENTO     shift, and go to state 60
+    DECREMENTO     shift, and go to state 61
+    '+'            shift, and go to state 62
+    '-'            shift, and go to state 63
+    '!'            shift, and go to state 64
+    '('            shift, and go to state 65
+
+    expresion  go to state 121
+
+
+State 85
+
+  148 expresion: TIPO_DATO '(' • expresion ')'
+
+    IDENTIFICADOR  shift, and go to state 52
+    TIPO_DATO      shift, and go to state 53
+    CADENA         shift, and go to state 54
+    ENTERO         shift, and go to state 55
+    TRUE           shift, and go to state 56
+    FALSE          shift, and go to state 57
+    REAL           shift, and go to state 58
+    CARACTER       shift, and go to state 59
+    INCREMENTO     shift, and go to state 60
+    DECREMENTO     shift, and go to state 61
+    '+'            shift, and go to state 62
+    '-'            shift, and go to state 63
+    '!'            shift, and go to state 64
+    '('            shift, and go to state 65
+
+    expresion  go to state 122
+
+
+State 86
+
+  125 expresion: expresion • '+' expresion
+  126          | expresion • '-' expresion
+  127          | expresion • '*' expresion
+  128          | expresion • '/' expresion
+  129          | expresion • '%' expresion
+  130          | expresion • IGUALDAD expresion
+  131          | expresion • DIFERENTE expresion
+  132          | expresion • '<' expresion
+  133          | expresion • '>' expresion
+  134          | expresion • MENOR_IGUAL expresion
+  135          | expresion • MAYOR_IGUAL expresion
+  136          | expresion • AND expresion
+  137          | expresion • OR expresion
+  141          | expresion • INCREMENTO
+  142          | expresion • DECREMENTO
+  143          | INCREMENTO expresion •
+  145          | expresion • '(' argumentos ')'
+  146          | expresion • '[' expresion ']'
+  147          | expresion • '.' IDENTIFICADOR
+
+    '.'  shift, and go to state 107
+    '('  shift, and go to state 108
+    '['  shift, and go to state 109
+
+    $default  reduce using rule 143 (expresion)
+
+
+State 87
+
+  125 expresion: expresion • '+' expresion
+  126          | expresion • '-' expresion
+  127          | expresion • '*' expresion
+  128          | expresion • '/' expresion
+  129          | expresion • '%' expresion
+  130          | expresion • IGUALDAD expresion
+  131          | expresion • DIFERENTE expresion
+  132          | expresion • '<' expresion
+  133          | expresion • '>' expresion
+  134          | expresion • MENOR_IGUAL expresion
+  135          | expresion • MAYOR_IGUAL expresion
+  136          | expresion • AND expresion
+  137          | expresion • OR expresion
+  141          | expresion • INCREMENTO
+  142          | expresion • DECREMENTO
+  144          | DECREMENTO expresion •
+  145          | expresion • '(' argumentos ')'
+  146          | expresion • '[' expresion ']'
+  147          | expresion • '.' IDENTIFICADOR
+
+    '.'  shift, and go to state 107
+    '('  shift, and go to state 108
+    '['  shift, and go to state 109
+
+    $default  reduce using rule 144 (expresion)
+
+
+State 88
+
+  125 expresion: expresion • '+' expresion
+  126          | expresion • '-' expresion
+  127          | expresion • '*' expresion
+  128          | expresion • '/' expresion
+  129          | expresion • '%' expresion
+  130          | expresion • IGUALDAD expresion
+  131          | expresion • DIFERENTE expresion
+  132          | expresion • '<' expresion
+  133          | expresion • '>' expresion
+  134          | expresion • MENOR_IGUAL expresion
+  135          | expresion • MAYOR_IGUAL expresion
+  136          | expresion • AND expresion
+  137          | expresion • OR expresion
+  140          | '+' expresion •
+  141          | expresion • INCREMENTO
+  142          | expresion • DECREMENTO
+  145          | expresion • '(' argumentos ')'
+  146          | expresion • '[' expresion ']'
+  147          | expresion • '.' IDENTIFICADOR
+
+    INCREMENTO  shift, and go to state 92
+    DECREMENTO  shift, and go to state 93
+    '.'         shift, and go to state 107
+    '('         shift, and go to state 108
+    '['         shift, and go to state 109
+
+    $default  reduce using rule 140 (expresion)
+
+
+State 89
+
+  125 expresion: expresion • '+' expresion
+  126          | expresion • '-' expresion
+  127          | expresion • '*' expresion
+  128          | expresion • '/' expresion
+  129          | expresion • '%' expresion
+  130          | expresion • IGUALDAD expresion
+  131          | expresion • DIFERENTE expresion
+  132          | expresion • '<' expresion
+  133          | expresion • '>' expresion
+  134          | expresion • MENOR_IGUAL expresion
+  135          | expresion • MAYOR_IGUAL expresion
+  136          | expresion • AND expresion
+  137          | expresion • OR expresion
+  139          | '-' expresion •
+  141          | expresion • INCREMENTO
+  142          | expresion • DECREMENTO
+  145          | expresion • '(' argumentos ')'
+  146          | expresion • '[' expresion ']'
+  147          | expresion • '.' IDENTIFICADOR
+
+    INCREMENTO  shift, and go to state 92
+    DECREMENTO  shift, and go to state 93
+    '.'         shift, and go to state 107
+    '('         shift, and go to state 108
+    '['         shift, and go to state 109
+
+    $default  reduce using rule 139 (expresion)
+
+
+State 90
+
+  125 expresion: expresion • '+' expresion
+  126          | expresion • '-' expresion
+  127          | expresion • '*' expresion
+  128          | expresion • '/' expresion
+  129          | expresion • '%' expresion
+  130          | expresion • IGUALDAD expresion
+  131          | expresion • DIFERENTE expresion
+  132          | expresion • '<' expresion
+  133          | expresion • '>' expresion
+  134          | expresion • MENOR_IGUAL expresion
+  135          | expresion • MAYOR_IGUAL expresion
+  136          | expresion • AND expresion
+  137          | expresion • OR expresion
+  138          | '!' expresion •
+  141          | expresion • INCREMENTO
+  142          | expresion • DECREMENTO
+  145          | expresion • '(' argumentos ')'
+  146          | expresion • '[' expresion ']'
+  147          | expresion • '.' IDENTIFICADOR
+
+    INCREMENTO  shift, and go to state 92
+    DECREMENTO  shift, and go to state 93
+    '.'         shift, and go to state 107
+    '('         shift, and go to state 108
+    '['         shift, and go to state 109
+
+    $default  reduce using rule 138 (expresion)
+
+
+State 91
+
+  124 expresion: '(' expresion • ')'
+  125          | expresion • '+' expresion
+  126          | expresion • '-' expresion
+  127          | expresion • '*' expresion
+  128          | expresion • '/' expresion
+  129          | expresion • '%' expresion
+  130          | expresion • IGUALDAD expresion
+  131          | expresion • DIFERENTE expresion
+  132          | expresion • '<' expresion
+  133          | expresion • '>' expresion
+  134          | expresion • MENOR_IGUAL expresion
+  135          | expresion • MAYOR_IGUAL expresion
+  136          | expresion • AND expresion
+  137          | expresion • OR expresion
+  141          | expresion • INCREMENTO
+  142          | expresion • DECREMENTO
+  145          | expresion • '(' argumentos ')'
+  146          | expresion • '[' expresion ']'
+  147          | expresion • '.' IDENTIFICADOR
+
+    INCREMENTO   shift, and go to state 92
+    DECREMENTO   shift, and go to state 93
+    IGUALDAD     shift, and go to state 94
+    DIFERENTE    shift, and go to state 95
+    MENOR_IGUAL  shift, and go to state 96
+    MAYOR_IGUAL  shift, and go to state 97
+    AND          shift, and go to state 98
+    OR           shift, and go to state 99
+    '<'          shift, and go to state 100
+    '>'          shift, and go to state 101
+    '+'          shift, and go to state 102
+    '-'          shift, and go to state 103
+    '*'          shift, and go to state 104
+    '/'          shift, and go to state 105
+    '%'          shift, and go to state 106
+    '.'          shift, and go to state 107
+    '('          shift, and go to state 108
+    '['          shift, and go to state 109
+    ')'          shift, and go to state 123
+
+
+State 92
+
+  141 expresion: expresion INCREMENTO •
+
+    $default  reduce using rule 141 (expresion)
+
+
+State 93
+
+  142 expresion: expresion DECREMENTO •
+
+    $default  reduce using rule 142 (expresion)
+
+
+State 94
+
+  130 expresion: expresion IGUALDAD • expresion
+
+    IDENTIFICADOR  shift, and go to state 52
+    TIPO_DATO      shift, and go to state 53
+    CADENA         shift, and go to state 54
+    ENTERO         shift, and go to state 55
+    TRUE           shift, and go to state 56
+    FALSE          shift, and go to state 57
+    REAL           shift, and go to state 58
+    CARACTER       shift, and go to state 59
+    INCREMENTO     shift, and go to state 60
+    DECREMENTO     shift, and go to state 61
+    '+'            shift, and go to state 62
+    '-'            shift, and go to state 63
+    '!'            shift, and go to state 64
+    '('            shift, and go to state 65
+
+    expresion  go to state 124
+
+
+State 95
+
+  131 expresion: expresion DIFERENTE • expresion
+
+    IDENTIFICADOR  shift, and go to state 52
+    TIPO_DATO      shift, and go to state 53
+    CADENA         shift, and go to state 54
+    ENTERO         shift, and go to state 55
+    TRUE           shift, and go to state 56
+    FALSE          shift, and go to state 57
+    REAL           shift, and go to state 58
+    CARACTER       shift, and go to state 59
+    INCREMENTO     shift, and go to state 60
+    DECREMENTO     shift, and go to state 61
+    '+'            shift, and go to state 62
+    '-'            shift, and go to state 63
+    '!'            shift, and go to state 64
+    '('            shift, and go to state 65
+
+    expresion  go to state 125
+
+
+State 96
+
+  134 expresion: expresion MENOR_IGUAL • expresion
+
+    IDENTIFICADOR  shift, and go to state 52
+    TIPO_DATO      shift, and go to state 53
+    CADENA         shift, and go to state 54
+    ENTERO         shift, and go to state 55
+    TRUE           shift, and go to state 56
+    FALSE          shift, and go to state 57
+    REAL           shift, and go to state 58
+    CARACTER       shift, and go to state 59
+    INCREMENTO     shift, and go to state 60
+    DECREMENTO     shift, and go to state 61
+    '+'            shift, and go to state 62
+    '-'            shift, and go to state 63
+    '!'            shift, and go to state 64
+    '('            shift, and go to state 65
+
+    expresion  go to state 126
+
+
+State 97
+
+  135 expresion: expresion MAYOR_IGUAL • expresion
+
+    IDENTIFICADOR  shift, and go to state 52
+    TIPO_DATO      shift, and go to state 53
+    CADENA         shift, and go to state 54
+    ENTERO         shift, and go to state 55
+    TRUE           shift, and go to state 56
+    FALSE          shift, and go to state 57
+    REAL           shift, and go to state 58
+    CARACTER       shift, and go to state 59
+    INCREMENTO     shift, and go to state 60
+    DECREMENTO     shift, and go to state 61
+    '+'            shift, and go to state 62
+    '-'            shift, and go to state 63
+    '!'            shift, and go to state 64
+    '('            shift, and go to state 65
+
+    expresion  go to state 127
+
+
+State 98
+
+  136 expresion: expresion AND • expresion
+
+    IDENTIFICADOR  shift, and go to state 52
+    TIPO_DATO      shift, and go to state 53
+    CADENA         shift, and go to state 54
+    ENTERO         shift, and go to state 55
+    TRUE           shift, and go to state 56
+    FALSE          shift, and go to state 57
+    REAL           shift, and go to state 58
+    CARACTER       shift, and go to state 59
+    INCREMENTO     shift, and go to state 60
+    DECREMENTO     shift, and go to state 61
+    '+'            shift, and go to state 62
+    '-'            shift, and go to state 63
+    '!'            shift, and go to state 64
+    '('            shift, and go to state 65
+
+    expresion  go to state 128
+
+
+State 99
+
+  137 expresion: expresion OR • expresion
+
+    IDENTIFICADOR  shift, and go to state 52
+    TIPO_DATO      shift, and go to state 53
+    CADENA         shift, and go to state 54
+    ENTERO         shift, and go to state 55
+    TRUE           shift, and go to state 56
+    FALSE          shift, and go to state 57
+    REAL           shift, and go to state 58
+    CARACTER       shift, and go to state 59
+    INCREMENTO     shift, and go to state 60
+    DECREMENTO     shift, and go to state 61
+    '+'            shift, and go to state 62
+    '-'            shift, and go to state 63
+    '!'            shift, and go to state 64
+    '('            shift, and go to state 65
+
+    expresion  go to state 129
+
+
+State 100
+
+  132 expresion: expresion '<' • expresion
+
+    IDENTIFICADOR  shift, and go to state 52
+    TIPO_DATO      shift, and go to state 53
+    CADENA         shift, and go to state 54
+    ENTERO         shift, and go to state 55
+    TRUE           shift, and go to state 56
+    FALSE          shift, and go to state 57
+    REAL           shift, and go to state 58
+    CARACTER       shift, and go to state 59
+    INCREMENTO     shift, and go to state 60
+    DECREMENTO     shift, and go to state 61
+    '+'            shift, and go to state 62
+    '-'            shift, and go to state 63
+    '!'            shift, and go to state 64
+    '('            shift, and go to state 65
+
+    expresion  go to state 130
+
+
+State 101
+
+  133 expresion: expresion '>' • expresion
+
+    IDENTIFICADOR  shift, and go to state 52
+    TIPO_DATO      shift, and go to state 53
+    CADENA         shift, and go to state 54
+    ENTERO         shift, and go to state 55
+    TRUE           shift, and go to state 56
+    FALSE          shift, and go to state 57
+    REAL           shift, and go to state 58
+    CARACTER       shift, and go to state 59
+    INCREMENTO     shift, and go to state 60
+    DECREMENTO     shift, and go to state 61
+    '+'            shift, and go to state 62
+    '-'            shift, and go to state 63
+    '!'            shift, and go to state 64
+    '('            shift, and go to state 65
+
+    expresion  go to state 131
+
+
+State 102
+
+  125 expresion: expresion '+' • expresion
+
+    IDENTIFICADOR  shift, and go to state 52
+    TIPO_DATO      shift, and go to state 53
+    CADENA         shift, and go to state 54
+    ENTERO         shift, and go to state 55
+    TRUE           shift, and go to state 56
+    FALSE          shift, and go to state 57
+    REAL           shift, and go to state 58
+    CARACTER       shift, and go to state 59
+    INCREMENTO     shift, and go to state 60
+    DECREMENTO     shift, and go to state 61
+    '+'            shift, and go to state 62
+    '-'            shift, and go to state 63
+    '!'            shift, and go to state 64
+    '('            shift, and go to state 65
+
+    expresion  go to state 132
+
+
+State 103
+
+  126 expresion: expresion '-' • expresion
+
+    IDENTIFICADOR  shift, and go to state 52
+    TIPO_DATO      shift, and go to state 53
+    CADENA         shift, and go to state 54
+    ENTERO         shift, and go to state 55
+    TRUE           shift, and go to state 56
+    FALSE          shift, and go to state 57
+    REAL           shift, and go to state 58
+    CARACTER       shift, and go to state 59
+    INCREMENTO     shift, and go to state 60
+    DECREMENTO     shift, and go to state 61
+    '+'            shift, and go to state 62
+    '-'            shift, and go to state 63
+    '!'            shift, and go to state 64
+    '('            shift, and go to state 65
+
+    expresion  go to state 133
+
+
+State 104
+
+  127 expresion: expresion '*' • expresion
+
+    IDENTIFICADOR  shift, and go to state 52
+    TIPO_DATO      shift, and go to state 53
+    CADENA         shift, and go to state 54
+    ENTERO         shift, and go to state 55
+    TRUE           shift, and go to state 56
+    FALSE          shift, and go to state 57
+    REAL           shift, and go to state 58
+    CARACTER       shift, and go to state 59
+    INCREMENTO     shift, and go to state 60
+    DECREMENTO     shift, and go to state 61
+    '+'            shift, and go to state 62
+    '-'            shift, and go to state 63
+    '!'            shift, and go to state 64
+    '('            shift, and go to state 65
+
+    expresion  go to state 134
+
+
+State 105
+
+  128 expresion: expresion '/' • expresion
+
+    IDENTIFICADOR  shift, and go to state 52
+    TIPO_DATO      shift, and go to state 53
+    CADENA         shift, and go to state 54
+    ENTERO         shift, and go to state 55
+    TRUE           shift, and go to state 56
+    FALSE          shift, and go to state 57
+    REAL           shift, and go to state 58
+    CARACTER       shift, and go to state 59
+    INCREMENTO     shift, and go to state 60
+    DECREMENTO     shift, and go to state 61
+    '+'            shift, and go to state 62
+    '-'            shift, and go to state 63
+    '!'            shift, and go to state 64
+    '('            shift, and go to state 65
+
+    expresion  go to state 135
+
+
+State 106
+
+  129 expresion: expresion '%' • expresion
+
+    IDENTIFICADOR  shift, and go to state 52
+    TIPO_DATO      shift, and go to state 53
+    CADENA         shift, and go to state 54
+    ENTERO         shift, and go to state 55
+    TRUE           shift, and go to state 56
+    FALSE          shift, and go to state 57
+    REAL           shift, and go to state 58
+    CARACTER       shift, and go to state 59
+    INCREMENTO     shift, and go to state 60
+    DECREMENTO     shift, and go to state 61
+    '+'            shift, and go to state 62
+    '-'            shift, and go to state 63
+    '!'            shift, and go to state 64
+    '('            shift, and go to state 65
+
+    expresion  go to state 136
+
+
+State 107
+
+  147 expresion: expresion '.' • IDENTIFICADOR
+
+    IDENTIFICADOR  shift, and go to state 137
+
+
+State 108
+
+  145 expresion: expresion '(' • argumentos ')'
+
+    IDENTIFICADOR  shift, and go to state 52
+    TIPO_DATO      shift, and go to state 53
+    CADENA         shift, and go to state 54
+    ENTERO         shift, and go to state 55
+    TRUE           shift, and go to state 56
+    FALSE          shift, and go to state 57
+    REAL           shift, and go to state 58
+    CARACTER       shift, and go to state 59
+    INCREMENTO     shift, and go to state 60
+    DECREMENTO     shift, and go to state 61
+    '+'            shift, and go to state 62
+    '-'            shift, and go to state 63
+    '!'            shift, and go to state 64
+    '('            shift, and go to state 65
+
+    $default  reduce using rule 151 (argumentos)
+
+    expresion         go to state 138
+    argumentos        go to state 139
+    lista_argumentos  go to state 140
+
+
+State 109
+
+  146 expresion: expresion '[' • expresion ']'
+
+    IDENTIFICADOR  shift, and go to state 52
+    TIPO_DATO      shift, and go to state 53
+    CADENA         shift, and go to state 54
+    ENTERO         shift, and go to state 55
+    TRUE           shift, and go to state 56
+    FALSE          shift, and go to state 57
+    REAL           shift, and go to state 58
+    CARACTER       shift, and go to state 59
+    INCREMENTO     shift, and go to state 60
+    DECREMENTO     shift, and go to state 61
+    '+'            shift, and go to state 62
+    '-'            shift, and go to state 63
+    '!'            shift, and go to state 64
+    '('            shift, and go to state 65
+
+    expresion  go to state 141
+
+
+State 110
+
+   18 variable_top: VAR IDENTIFICADOR tipo '=' expresion •
+  125 expresion: expresion • '+' expresion
+  126          | expresion • '-' expresion
+  127          | expresion • '*' expresion
+  128          | expresion • '/' expresion
+  129          | expresion • '%' expresion
+  130          | expresion • IGUALDAD expresion
+  131          | expresion • DIFERENTE expresion
+  132          | expresion • '<' expresion
+  133          | expresion • '>' expresion
+  134          | expresion • MENOR_IGUAL expresion
+  135          | expresion • MAYOR_IGUAL expresion
+  136          | expresion • AND expresion
+  137          | expresion • OR expresion
+  141          | expresion • INCREMENTO
+  142          | expresion • DECREMENTO
+  145          | expresion • '(' argumentos ')'
+  146          | expresion • '[' expresion ']'
+  147          | expresion • '.' IDENTIFICADOR
+
+    INCREMENTO   shift, and go to state 92
+    DECREMENTO   shift, and go to state 93
+    IGUALDAD     shift, and go to state 94
+    DIFERENTE    shift, and go to state 95
+    MENOR_IGUAL  shift, and go to state 96
+    MAYOR_IGUAL  shift, and go to state 97
+    AND          shift, and go to state 98
+    OR           shift, and go to state 99
+    '<'          shift, and go to state 100
+    '>'          shift, and go to state 101
+    '+'          shift, and go to state 102
+    '-'          shift, and go to state 103
+    '*'          shift, and go to state 104
+    '/'          shift, and go to state 105
+    '%'          shift, and go to state 106
+    '.'          shift, and go to state 107
+    '('          shift, and go to state 108
+    '['          shift, and go to state 109
+
+    $default  reduce using rule 18 (variable_top)
+
+
+State 111
+
+   26 var_spec: IDENTIFICADOR '=' expresion •
+  125 expresion: expresion • '+' expresion
+  126          | expresion • '-' expresion
+  127          | expresion • '*' expresion
+  128          | expresion • '/' expresion
+  129          | expresion • '%' expresion
+  130          | expresion • IGUALDAD expresion
+  131          | expresion • DIFERENTE expresion
+  132          | expresion • '<' expresion
+  133          | expresion • '>' expresion
+  134          | expresion • MENOR_IGUAL expresion
+  135          | expresion • MAYOR_IGUAL expresion
+  136          | expresion • AND expresion
+  137          | expresion • OR expresion
+  141          | expresion • INCREMENTO
+  142          | expresion • DECREMENTO
+  145          | expresion • '(' argumentos ')'
+  146          | expresion • '[' expresion ']'
+  147          | expresion • '.' IDENTIFICADOR
+
+    INCREMENTO   shift, and go to state 92
+    DECREMENTO   shift, and go to state 93
+    IGUALDAD     shift, and go to state 94
+    DIFERENTE    shift, and go to state 95
+    MENOR_IGUAL  shift, and go to state 96
+    MAYOR_IGUAL  shift, and go to state 97
+    AND          shift, and go to state 98
+    OR           shift, and go to state 99
+    '<'          shift, and go to state 100
+    '>'          shift, and go to state 101
+    '+'          shift, and go to state 102
+    '-'          shift, and go to state 103
+    '*'          shift, and go to state 104
+    '/'          shift, and go to state 105
+    '%'          shift, and go to state 106
+    '.'          shift, and go to state 107
+    '('          shift, and go to state 108
+    '['          shift, and go to state 109
+
+    $default  reduce using rule 26 (var_spec)
+
+
+State 112
+
+   25 var_spec: IDENTIFICADOR tipo '=' • expresion
+
+    IDENTIFICADOR  shift, and go to state 52
+    TIPO_DATO      shift, and go to state 53
+    CADENA         shift, and go to state 54
+    ENTERO         shift, and go to state 55
+    TRUE           shift, and go to state 56
+    FALSE          shift, and go to state 57
+    REAL           shift, and go to state 58
+    CARACTER       shift, and go to state 59
+    INCREMENTO     shift, and go to state 60
+    DECREMENTO     shift, and go to state 61
+    '+'            shift, and go to state 62
+    '-'            shift, and go to state 63
+    '!'            shift, and go to state 64
+    '('            shift, and go to state 65
+
+    expresion  go to state 142
+
+
+State 113
+
+   28 constante_top: CONST IDENTIFICADOR tipo '=' expresion •
+  125 expresion: expresion • '+' expresion
+  126          | expresion • '-' expresion
+  127          | expresion • '*' expresion
+  128          | expresion • '/' expresion
+  129          | expresion • '%' expresion
+  130          | expresion • IGUALDAD expresion
+  131          | expresion • DIFERENTE expresion
+  132          | expresion • '<' expresion
+  133          | expresion • '>' expresion
+  134          | expresion • MENOR_IGUAL expresion
+  135          | expresion • MAYOR_IGUAL expresion
+  136          | expresion • AND expresion
+  137          | expresion • OR expresion
+  141          | expresion • INCREMENTO
+  142          | expresion • DECREMENTO
+  145          | expresion • '(' argumentos ')'
+  146          | expresion • '[' expresion ']'
+  147          | expresion • '.' IDENTIFICADOR
+
+    INCREMENTO   shift, and go to state 92
+    DECREMENTO   shift, and go to state 93
+    IGUALDAD     shift, and go to state 94
+    DIFERENTE    shift, and go to state 95
+    MENOR_IGUAL  shift, and go to state 96
+    MAYOR_IGUAL  shift, and go to state 97
+    AND          shift, and go to state 98
+    OR           shift, and go to state 99
+    '<'          shift, and go to state 100
+    '>'          shift, and go to state 101
+    '+'          shift, and go to state 102
+    '-'          shift, and go to state 103
+    '*'          shift, and go to state 104
+    '/'          shift, and go to state 105
+    '%'          shift, and go to state 106
+    '.'          shift, and go to state 107
+    '('          shift, and go to state 108
+    '['          shift, and go to state 109
+
+    $default  reduce using rule 28 (constante_top)
+
+
+State 114
+
+   35 const_spec: IDENTIFICADOR '=' expresion •
+  125 expresion: expresion • '+' expresion
+  126          | expresion • '-' expresion
+  127          | expresion • '*' expresion
+  128          | expresion • '/' expresion
+  129          | expresion • '%' expresion
+  130          | expresion • IGUALDAD expresion
+  131          | expresion • DIFERENTE expresion
+  132          | expresion • '<' expresion
+  133          | expresion • '>' expresion
+  134          | expresion • MENOR_IGUAL expresion
+  135          | expresion • MAYOR_IGUAL expresion
+  136          | expresion • AND expresion
+  137          | expresion • OR expresion
+  141          | expresion • INCREMENTO
+  142          | expresion • DECREMENTO
+  145          | expresion • '(' argumentos ')'
+  146          | expresion • '[' expresion ']'
+  147          | expresion • '.' IDENTIFICADOR
+
+    INCREMENTO   shift, and go to state 92
+    DECREMENTO   shift, and go to state 93
+    IGUALDAD     shift, and go to state 94
+    DIFERENTE    shift, and go to state 95
+    MENOR_IGUAL  shift, and go to state 96
+    MAYOR_IGUAL  shift, and go to state 97
+    AND          shift, and go to state 98
+    OR           shift, and go to state 99
+    '<'          shift, and go to state 100
+    '>'          shift, and go to state 101
+    '+'          shift, and go to state 102
+    '-'          shift, and go to state 103
+    '*'          shift, and go to state 104
+    '/'          shift, and go to state 105
+    '%'          shift, and go to state 106
+    '.'          shift, and go to state 107
+    '('          shift, and go to state 108
+    '['          shift, and go to state 109
+
+    $default  reduce using rule 35 (const_spec)
+
+
+State 115
+
+   34 const_spec: IDENTIFICADOR tipo '=' • expresion
+
+    IDENTIFICADOR  shift, and go to state 52
+    TIPO_DATO      shift, and go to state 53
+    CADENA         shift, and go to state 54
+    ENTERO         shift, and go to state 55
+    TRUE           shift, and go to state 56
+    FALSE          shift, and go to state 57
+    REAL           shift, and go to state 58
+    CARACTER       shift, and go to state 59
+    INCREMENTO     shift, and go to state 60
+    DECREMENTO     shift, and go to state 61
+    '+'            shift, and go to state 62
+    '-'            shift, and go to state 63
+    '!'            shift, and go to state 64
+    '('            shift, and go to state 65
+
+    expresion  go to state 143
+
+
+State 116
+
+   47 parametro: IDENTIFICADOR ',' • IDENTIFICADOR tipo
+
+    IDENTIFICADOR  shift, and go to state 144
+
+
+State 117
+
+   46 parametro: IDENTIFICADOR tipo •
+
+    $default  reduce using rule 46 (parametro)
+
+
+State 118
+
+   39 funcion: FUNC IDENTIFICADOR $@3 '(' parametros ')' • opt_tipo_retorno bloque
+
+    IDENTIFICADOR  shift, and go to state 35
+    TIPO_DATO      shift, and go to state 36
+    '('            shift, and go to state 145
+    '['            shift, and go to state 37
+
+    $default  reduce using rule 41 (opt_tipo_retorno)
+
+    opt_tipo_retorno  go to state 146
+    tipo_retorno      go to state 147
+    tipo              go to state 148
+
+
+State 119
+
+   44 lista_parametros: lista_parametros ',' • parametro
+
+    IDENTIFICADOR  shift, and go to state 78
+
+    parametro  go to state 149
+
+
+State 120
+
+   65 tipo: '[' ENTERO ']' tipo •
+
+    $default  reduce using rule 65 (tipo)
+
+
+State 121
+
+  125 expresion: expresion • '+' expresion
+  126          | expresion • '-' expresion
+  127          | expresion • '*' expresion
+  128          | expresion • '/' expresion
+  129          | expresion • '%' expresion
+  130          | expresion • IGUALDAD expresion
+  131          | expresion • DIFERENTE expresion
+  132          | expresion • '<' expresion
+  133          | expresion • '>' expresion
+  134          | expresion • MENOR_IGUAL expresion
+  135          | expresion • MAYOR_IGUAL expresion
+  136          | expresion • AND expresion
+  137          | expresion • OR expresion
+  141          | expresion • INCREMENTO
+  142          | expresion • DECREMENTO
+  145          | expresion • '(' argumentos ')'
+  146          | expresion • '[' expresion ']'
+  147          | expresion • '.' IDENTIFICADOR
+  149          | IDENTIFICADOR '(' expresion • ')'
+
+    INCREMENTO   shift, and go to state 92
+    DECREMENTO   shift, and go to state 93
+    IGUALDAD     shift, and go to state 94
+    DIFERENTE    shift, and go to state 95
+    MENOR_IGUAL  shift, and go to state 96
+    MAYOR_IGUAL  shift, and go to state 97
+    AND          shift, and go to state 98
+    OR           shift, and go to state 99
+    '<'          shift, and go to state 100
+    '>'          shift, and go to state 101
+    '+'          shift, and go to state 102
+    '-'          shift, and go to state 103
+    '*'          shift, and go to state 104
+    '/'          shift, and go to state 105
+    '%'          shift, and go to state 106
+    '.'          shift, and go to state 107
+    '('          shift, and go to state 108
+    '['          shift, and go to state 109
+    ')'          shift, and go to state 150
+
+
+State 122
+
+  125 expresion: expresion • '+' expresion
+  126          | expresion • '-' expresion
+  127          | expresion • '*' expresion
+  128          | expresion • '/' expresion
+  129          | expresion • '%' expresion
+  130          | expresion • IGUALDAD expresion
+  131          | expresion • DIFERENTE expresion
+  132          | expresion • '<' expresion
+  133          | expresion • '>' expresion
+  134          | expresion • MENOR_IGUAL expresion
+  135          | expresion • MAYOR_IGUAL expresion
+  136          | expresion • AND expresion
+  137          | expresion • OR expresion
+  141          | expresion • INCREMENTO
+  142          | expresion • DECREMENTO
+  145          | expresion • '(' argumentos ')'
+  146          | expresion • '[' expresion ']'
+  147          | expresion • '.' IDENTIFICADOR
+  148          | TIPO_DATO '(' expresion • ')'
+
+    INCREMENTO   shift, and go to state 92
+    DECREMENTO   shift, and go to state 93
+    IGUALDAD     shift, and go to state 94
+    DIFERENTE    shift, and go to state 95
+    MENOR_IGUAL  shift, and go to state 96
+    MAYOR_IGUAL  shift, and go to state 97
+    AND          shift, and go to state 98
+    OR           shift, and go to state 99
+    '<'          shift, and go to state 100
+    '>'          shift, and go to state 101
+    '+'          shift, and go to state 102
+    '-'          shift, and go to state 103
+    '*'          shift, and go to state 104
+    '/'          shift, and go to state 105
+    '%'          shift, and go to state 106
+    '.'          shift, and go to state 107
+    '('          shift, and go to state 108
+    '['          shift, and go to state 109
+    ')'          shift, and go to state 151
+
+
+State 123
+
+  124 expresion: '(' expresion ')' •
+
+    $default  reduce using rule 124 (expresion)
+
+
+State 124
+
+  125 expresion: expresion • '+' expresion
+  126          | expresion • '-' expresion
+  127          | expresion • '*' expresion
+  128          | expresion • '/' expresion
+  129          | expresion • '%' expresion
+  130          | expresion • IGUALDAD expresion
+  130          | expresion IGUALDAD expresion •
+  131          | expresion • DIFERENTE expresion
+  132          | expresion • '<' expresion
+  133          | expresion • '>' expresion
+  134          | expresion • MENOR_IGUAL expresion
+  135          | expresion • MAYOR_IGUAL expresion
+  136          | expresion • AND expresion
+  137          | expresion • OR expresion
+  141          | expresion • INCREMENTO
+  142          | expresion • DECREMENTO
+  145          | expresion • '(' argumentos ')'
+  146          | expresion • '[' expresion ']'
+  147          | expresion • '.' IDENTIFICADOR
+
+    INCREMENTO   shift, and go to state 92
+    DECREMENTO   shift, and go to state 93
+    MENOR_IGUAL  shift, and go to state 96
+    MAYOR_IGUAL  shift, and go to state 97
+    '<'          shift, and go to state 100
+    '>'          shift, and go to state 101
+    '+'          shift, and go to state 102
+    '-'          shift, and go to state 103
+    '*'          shift, and go to state 104
+    '/'          shift, and go to state 105
+    '%'          shift, and go to state 106
+    '.'          shift, and go to state 107
+    '('          shift, and go to state 108
+    '['          shift, and go to state 109
+
+    $default  reduce using rule 130 (expresion)
+
+
+State 125
+
+  125 expresion: expresion • '+' expresion
+  126          | expresion • '-' expresion
+  127          | expresion • '*' expresion
+  128          | expresion • '/' expresion
+  129          | expresion • '%' expresion
+  130          | expresion • IGUALDAD expresion
+  131          | expresion • DIFERENTE expresion
+  131          | expresion DIFERENTE expresion •
+  132          | expresion • '<' expresion
+  133          | expresion • '>' expresion
+  134          | expresion • MENOR_IGUAL expresion
+  135          | expresion • MAYOR_IGUAL expresion
+  136          | expresion • AND expresion
+  137          | expresion • OR expresion
+  141          | expresion • INCREMENTO
+  142          | expresion • DECREMENTO
+  145          | expresion • '(' argumentos ')'
+  146          | expresion • '[' expresion ']'
+  147          | expresion • '.' IDENTIFICADOR
+
+    INCREMENTO   shift, and go to state 92
+    DECREMENTO   shift, and go to state 93
+    MENOR_IGUAL  shift, and go to state 96
+    MAYOR_IGUAL  shift, and go to state 97
+    '<'          shift, and go to state 100
+    '>'          shift, and go to state 101
+    '+'          shift, and go to state 102
+    '-'          shift, and go to state 103
+    '*'          shift, and go to state 104
+    '/'          shift, and go to state 105
+    '%'          shift, and go to state 106
+    '.'          shift, and go to state 107
+    '('          shift, and go to state 108
+    '['          shift, and go to state 109
+
+    $default  reduce using rule 131 (expresion)
+
+
+State 126
+
+  125 expresion: expresion • '+' expresion
+  126          | expresion • '-' expresion
+  127          | expresion • '*' expresion
+  128          | expresion • '/' expresion
+  129          | expresion • '%' expresion
+  130          | expresion • IGUALDAD expresion
+  131          | expresion • DIFERENTE expresion
+  132          | expresion • '<' expresion
+  133          | expresion • '>' expresion
+  134          | expresion • MENOR_IGUAL expresion
+  134          | expresion MENOR_IGUAL expresion •
+  135          | expresion • MAYOR_IGUAL expresion
+  136          | expresion • AND expresion
+  137          | expresion • OR expresion
+  141          | expresion • INCREMENTO
+  142          | expresion • DECREMENTO
+  145          | expresion • '(' argumentos ')'
+  146          | expresion • '[' expresion ']'
+  147          | expresion • '.' IDENTIFICADOR
+
+    INCREMENTO  shift, and go to state 92
+    DECREMENTO  shift, and go to state 93
+    '+'         shift, and go to state 102
+    '-'         shift, and go to state 103
+    '*'         shift, and go to state 104
+    '/'         shift, and go to state 105
+    '%'         shift, and go to state 106
+    '.'         shift, and go to state 107
+    '('         shift, and go to state 108
+    '['         shift, and go to state 109
+
+    $default  reduce using rule 134 (expresion)
+
+
+State 127
+
+  125 expresion: expresion • '+' expresion
+  126          | expresion • '-' expresion
+  127          | expresion • '*' expresion
+  128          | expresion • '/' expresion
+  129          | expresion • '%' expresion
+  130          | expresion • IGUALDAD expresion
+  131          | expresion • DIFERENTE expresion
+  132          | expresion • '<' expresion
+  133          | expresion • '>' expresion
+  134          | expresion • MENOR_IGUAL expresion
+  135          | expresion • MAYOR_IGUAL expresion
+  135          | expresion MAYOR_IGUAL expresion •
+  136          | expresion • AND expresion
+  137          | expresion • OR expresion
+  141          | expresion • INCREMENTO
+  142          | expresion • DECREMENTO
+  145          | expresion • '(' argumentos ')'
+  146          | expresion • '[' expresion ']'
+  147          | expresion • '.' IDENTIFICADOR
+
+    INCREMENTO  shift, and go to state 92
+    DECREMENTO  shift, and go to state 93
+    '+'         shift, and go to state 102
+    '-'         shift, and go to state 103
+    '*'         shift, and go to state 104
+    '/'         shift, and go to state 105
+    '%'         shift, and go to state 106
+    '.'         shift, and go to state 107
+    '('         shift, and go to state 108
+    '['         shift, and go to state 109
+
+    $default  reduce using rule 135 (expresion)
+
+
+State 128
+
+  125 expresion: expresion • '+' expresion
+  126          | expresion • '-' expresion
+  127          | expresion • '*' expresion
+  128          | expresion • '/' expresion
+  129          | expresion • '%' expresion
+  130          | expresion • IGUALDAD expresion
+  131          | expresion • DIFERENTE expresion
+  132          | expresion • '<' expresion
+  133          | expresion • '>' expresion
+  134          | expresion • MENOR_IGUAL expresion
+  135          | expresion • MAYOR_IGUAL expresion
+  136          | expresion • AND expresion
+  136          | expresion AND expresion •
+  137          | expresion • OR expresion
+  141          | expresion • INCREMENTO
+  142          | expresion • DECREMENTO
+  145          | expresion • '(' argumentos ')'
+  146          | expresion • '[' expresion ']'
+  147          | expresion • '.' IDENTIFICADOR
+
+    INCREMENTO   shift, and go to state 92
+    DECREMENTO   shift, and go to state 93
+    IGUALDAD     shift, and go to state 94
+    DIFERENTE    shift, and go to state 95
+    MENOR_IGUAL  shift, and go to state 96
+    MAYOR_IGUAL  shift, and go to state 97
+    '<'          shift, and go to state 100
+    '>'          shift, and go to state 101
+    '+'          shift, and go to state 102
+    '-'          shift, and go to state 103
+    '*'          shift, and go to state 104
+    '/'          shift, and go to state 105
+    '%'          shift, and go to state 106
+    '.'          shift, and go to state 107
+    '('          shift, and go to state 108
+    '['          shift, and go to state 109
+
+    $default  reduce using rule 136 (expresion)
+
+
+State 129
+
+  125 expresion: expresion • '+' expresion
+  126          | expresion • '-' expresion
+  127          | expresion • '*' expresion
+  128          | expresion • '/' expresion
+  129          | expresion • '%' expresion
+  130          | expresion • IGUALDAD expresion
+  131          | expresion • DIFERENTE expresion
+  132          | expresion • '<' expresion
+  133          | expresion • '>' expresion
+  134          | expresion • MENOR_IGUAL expresion
+  135          | expresion • MAYOR_IGUAL expresion
+  136          | expresion • AND expresion
+  137          | expresion • OR expresion
+  137          | expresion OR expresion •
+  141          | expresion • INCREMENTO
+  142          | expresion • DECREMENTO
+  145          | expresion • '(' argumentos ')'
+  146          | expresion • '[' expresion ']'
+  147          | expresion • '.' IDENTIFICADOR
+
+    INCREMENTO   shift, and go to state 92
+    DECREMENTO   shift, and go to state 93
+    IGUALDAD     shift, and go to state 94
+    DIFERENTE    shift, and go to state 95
+    MENOR_IGUAL  shift, and go to state 96
+    MAYOR_IGUAL  shift, and go to state 97
+    AND          shift, and go to state 98
+    '<'          shift, and go to state 100
+    '>'          shift, and go to state 101
+    '+'          shift, and go to state 102
+    '-'          shift, and go to state 103
+    '*'          shift, and go to state 104
+    '/'          shift, and go to state 105
+    '%'          shift, and go to state 106
+    '.'          shift, and go to state 107
+    '('          shift, and go to state 108
+    '['          shift, and go to state 109
+
+    $default  reduce using rule 137 (expresion)
+
+
+State 130
+
+  125 expresion: expresion • '+' expresion
+  126          | expresion • '-' expresion
+  127          | expresion • '*' expresion
+  128          | expresion • '/' expresion
+  129          | expresion • '%' expresion
+  130          | expresion • IGUALDAD expresion
+  131          | expresion • DIFERENTE expresion
+  132          | expresion • '<' expresion
+  132          | expresion '<' expresion •
+  133          | expresion • '>' expresion
+  134          | expresion • MENOR_IGUAL expresion
+  135          | expresion • MAYOR_IGUAL expresion
+  136          | expresion • AND expresion
+  137          | expresion • OR expresion
+  141          | expresion • INCREMENTO
+  142          | expresion • DECREMENTO
+  145          | expresion • '(' argumentos ')'
+  146          | expresion • '[' expresion ']'
+  147          | expresion • '.' IDENTIFICADOR
+
+    INCREMENTO  shift, and go to state 92
+    DECREMENTO  shift, and go to state 93
+    '+'         shift, and go to state 102
+    '-'         shift, and go to state 103
+    '*'         shift, and go to state 104
+    '/'         shift, and go to state 105
+    '%'         shift, and go to state 106
+    '.'         shift, and go to state 107
+    '('         shift, and go to state 108
+    '['         shift, and go to state 109
+
+    $default  reduce using rule 132 (expresion)
+
+
+State 131
+
+  125 expresion: expresion • '+' expresion
+  126          | expresion • '-' expresion
+  127          | expresion • '*' expresion
+  128          | expresion • '/' expresion
+  129          | expresion • '%' expresion
+  130          | expresion • IGUALDAD expresion
+  131          | expresion • DIFERENTE expresion
+  132          | expresion • '<' expresion
+  133          | expresion • '>' expresion
+  133          | expresion '>' expresion •
+  134          | expresion • MENOR_IGUAL expresion
+  135          | expresion • MAYOR_IGUAL expresion
+  136          | expresion • AND expresion
+  137          | expresion • OR expresion
+  141          | expresion • INCREMENTO
+  142          | expresion • DECREMENTO
+  145          | expresion • '(' argumentos ')'
+  146          | expresion • '[' expresion ']'
+  147          | expresion • '.' IDENTIFICADOR
+
+    INCREMENTO  shift, and go to state 92
+    DECREMENTO  shift, and go to state 93
+    '+'         shift, and go to state 102
+    '-'         shift, and go to state 103
+    '*'         shift, and go to state 104
+    '/'         shift, and go to state 105
+    '%'         shift, and go to state 106
+    '.'         shift, and go to state 107
+    '('         shift, and go to state 108
+    '['         shift, and go to state 109
+
+    $default  reduce using rule 133 (expresion)
+
+
+State 132
+
+  125 expresion: expresion • '+' expresion
+  125          | expresion '+' expresion •
+  126          | expresion • '-' expresion
+  127          | expresion • '*' expresion
+  128          | expresion • '/' expresion
+  129          | expresion • '%' expresion
+  130          | expresion • IGUALDAD expresion
+  131          | expresion • DIFERENTE expresion
+  132          | expresion • '<' expresion
+  133          | expresion • '>' expresion
+  134          | expresion • MENOR_IGUAL expresion
+  135          | expresion • MAYOR_IGUAL expresion
+  136          | expresion • AND expresion
+  137          | expresion • OR expresion
+  141          | expresion • INCREMENTO
+  142          | expresion • DECREMENTO
+  145          | expresion • '(' argumentos ')'
+  146          | expresion • '[' expresion ']'
+  147          | expresion • '.' IDENTIFICADOR
+
+    INCREMENTO  shift, and go to state 92
+    DECREMENTO  shift, and go to state 93
+    '*'         shift, and go to state 104
+    '/'         shift, and go to state 105
+    '%'         shift, and go to state 106
+    '.'         shift, and go to state 107
+    '('         shift, and go to state 108
+    '['         shift, and go to state 109
+
+    $default  reduce using rule 125 (expresion)
+
+
+State 133
+
+  125 expresion: expresion • '+' expresion
+  126          | expresion • '-' expresion
+  126          | expresion '-' expresion •
+  127          | expresion • '*' expresion
+  128          | expresion • '/' expresion
+  129          | expresion • '%' expresion
+  130          | expresion • IGUALDAD expresion
+  131          | expresion • DIFERENTE expresion
+  132          | expresion • '<' expresion
+  133          | expresion • '>' expresion
+  134          | expresion • MENOR_IGUAL expresion
+  135          | expresion • MAYOR_IGUAL expresion
+  136          | expresion • AND expresion
+  137          | expresion • OR expresion
+  141          | expresion • INCREMENTO
+  142          | expresion • DECREMENTO
+  145          | expresion • '(' argumentos ')'
+  146          | expresion • '[' expresion ']'
+  147          | expresion • '.' IDENTIFICADOR
+
+    INCREMENTO  shift, and go to state 92
+    DECREMENTO  shift, and go to state 93
+    '*'         shift, and go to state 104
+    '/'         shift, and go to state 105
+    '%'         shift, and go to state 106
+    '.'         shift, and go to state 107
+    '('         shift, and go to state 108
+    '['         shift, and go to state 109
+
+    $default  reduce using rule 126 (expresion)
+
+
+State 134
+
+  125 expresion: expresion • '+' expresion
+  126          | expresion • '-' expresion
+  127          | expresion • '*' expresion
+  127          | expresion '*' expresion •
+  128          | expresion • '/' expresion
+  129          | expresion • '%' expresion
+  130          | expresion • IGUALDAD expresion
+  131          | expresion • DIFERENTE expresion
+  132          | expresion • '<' expresion
+  133          | expresion • '>' expresion
+  134          | expresion • MENOR_IGUAL expresion
+  135          | expresion • MAYOR_IGUAL expresion
+  136          | expresion • AND expresion
+  137          | expresion • OR expresion
+  141          | expresion • INCREMENTO
+  142          | expresion • DECREMENTO
+  145          | expresion • '(' argumentos ')'
+  146          | expresion • '[' expresion ']'
+  147          | expresion • '.' IDENTIFICADOR
+
+    INCREMENTO  shift, and go to state 92
+    DECREMENTO  shift, and go to state 93
+    '.'         shift, and go to state 107
+    '('         shift, and go to state 108
+    '['         shift, and go to state 109
+
+    $default  reduce using rule 127 (expresion)
+
+
+State 135
+
+  125 expresion: expresion • '+' expresion
+  126          | expresion • '-' expresion
+  127          | expresion • '*' expresion
+  128          | expresion • '/' expresion
+  128          | expresion '/' expresion •
+  129          | expresion • '%' expresion
+  130          | expresion • IGUALDAD expresion
+  131          | expresion • DIFERENTE expresion
+  132          | expresion • '<' expresion
+  133          | expresion • '>' expresion
+  134          | expresion • MENOR_IGUAL expresion
+  135          | expresion • MAYOR_IGUAL expresion
+  136          | expresion • AND expresion
+  137          | expresion • OR expresion
+  141          | expresion • INCREMENTO
+  142          | expresion • DECREMENTO
+  145          | expresion • '(' argumentos ')'
+  146          | expresion • '[' expresion ']'
+  147          | expresion • '.' IDENTIFICADOR
+
+    INCREMENTO  shift, and go to state 92
+    DECREMENTO  shift, and go to state 93
+    '.'         shift, and go to state 107
+    '('         shift, and go to state 108
+    '['         shift, and go to state 109
+
+    $default  reduce using rule 128 (expresion)
+
+
+State 136
+
+  125 expresion: expresion • '+' expresion
+  126          | expresion • '-' expresion
+  127          | expresion • '*' expresion
+  128          | expresion • '/' expresion
+  129          | expresion • '%' expresion
+  129          | expresion '%' expresion •
+  130          | expresion • IGUALDAD expresion
+  131          | expresion • DIFERENTE expresion
+  132          | expresion • '<' expresion
+  133          | expresion • '>' expresion
+  134          | expresion • MENOR_IGUAL expresion
+  135          | expresion • MAYOR_IGUAL expresion
+  136          | expresion • AND expresion
+  137          | expresion • OR expresion
+  141          | expresion • INCREMENTO
+  142          | expresion • DECREMENTO
+  145          | expresion • '(' argumentos ')'
+  146          | expresion • '[' expresion ']'
+  147          | expresion • '.' IDENTIFICADOR
+
+    INCREMENTO  shift, and go to state 92
+    DECREMENTO  shift, and go to state 93
+    '.'         shift, and go to state 107
+    '('         shift, and go to state 108
+    '['         shift, and go to state 109
+
+    $default  reduce using rule 129 (expresion)
+
+
+State 137
+
+  147 expresion: expresion '.' IDENTIFICADOR •
+
+    $default  reduce using rule 147 (expresion)
+
+
+State 138
+
+  125 expresion: expresion • '+' expresion
+  126          | expresion • '-' expresion
+  127          | expresion • '*' expresion
+  128          | expresion • '/' expresion
+  129          | expresion • '%' expresion
+  130          | expresion • IGUALDAD expresion
+  131          | expresion • DIFERENTE expresion
+  132          | expresion • '<' expresion
+  133          | expresion • '>' expresion
+  134          | expresion • MENOR_IGUAL expresion
+  135          | expresion • MAYOR_IGUAL expresion
+  136          | expresion • AND expresion
+  137          | expresion • OR expresion
+  141          | expresion • INCREMENTO
+  142          | expresion • DECREMENTO
+  145          | expresion • '(' argumentos ')'
+  146          | expresion • '[' expresion ']'
+  147          | expresion • '.' IDENTIFICADOR
+  153 lista_argumentos: expresion •
+
+    INCREMENTO   shift, and go to state 92
+    DECREMENTO   shift, and go to state 93
+    IGUALDAD     shift, and go to state 94
+    DIFERENTE    shift, and go to state 95
+    MENOR_IGUAL  shift, and go to state 96
+    MAYOR_IGUAL  shift, and go to state 97
+    AND          shift, and go to state 98
+    OR           shift, and go to state 99
+    '<'          shift, and go to state 100
+    '>'          shift, and go to state 101
+    '+'          shift, and go to state 102
+    '-'          shift, and go to state 103
+    '*'          shift, and go to state 104
+    '/'          shift, and go to state 105
+    '%'          shift, and go to state 106
+    '.'          shift, and go to state 107
+    '('          shift, and go to state 108
+    '['          shift, and go to state 109
+
+    $default  reduce using rule 153 (lista_argumentos)
+
+
+State 139
+
+  145 expresion: expresion '(' argumentos • ')'
+
+    ')'  shift, and go to state 152
+
+
+State 140
+
+  150 argumentos: lista_argumentos •
+  152 lista_argumentos: lista_argumentos • ',' expresion
+
+    ','  shift, and go to state 153
+
+    $default  reduce using rule 150 (argumentos)
+
+
+State 141
+
+  125 expresion: expresion • '+' expresion
+  126          | expresion • '-' expresion
+  127          | expresion • '*' expresion
+  128          | expresion • '/' expresion
+  129          | expresion • '%' expresion
+  130          | expresion • IGUALDAD expresion
+  131          | expresion • DIFERENTE expresion
+  132          | expresion • '<' expresion
+  133          | expresion • '>' expresion
+  134          | expresion • MENOR_IGUAL expresion
+  135          | expresion • MAYOR_IGUAL expresion
+  136          | expresion • AND expresion
+  137          | expresion • OR expresion
+  141          | expresion • INCREMENTO
+  142          | expresion • DECREMENTO
+  145          | expresion • '(' argumentos ')'
+  146          | expresion • '[' expresion ']'
+  146          | expresion '[' expresion • ']'
+  147          | expresion • '.' IDENTIFICADOR
+
+    INCREMENTO   shift, and go to state 92
+    DECREMENTO   shift, and go to state 93
+    IGUALDAD     shift, and go to state 94
+    DIFERENTE    shift, and go to state 95
+    MENOR_IGUAL  shift, and go to state 96
+    MAYOR_IGUAL  shift, and go to state 97
+    AND          shift, and go to state 98
+    OR           shift, and go to state 99
+    '<'          shift, and go to state 100
+    '>'          shift, and go to state 101
+    '+'          shift, and go to state 102
+    '-'          shift, and go to state 103
+    '*'          shift, and go to state 104
+    '/'          shift, and go to state 105
+    '%'          shift, and go to state 106
+    '.'          shift, and go to state 107
+    '('          shift, and go to state 108
+    '['          shift, and go to state 109
+    ']'          shift, and go to state 154
+
+
+State 142
+
+   25 var_spec: IDENTIFICADOR tipo '=' expresion •
+  125 expresion: expresion • '+' expresion
+  126          | expresion • '-' expresion
+  127          | expresion • '*' expresion
+  128          | expresion • '/' expresion
+  129          | expresion • '%' expresion
+  130          | expresion • IGUALDAD expresion
+  131          | expresion • DIFERENTE expresion
+  132          | expresion • '<' expresion
+  133          | expresion • '>' expresion
+  134          | expresion • MENOR_IGUAL expresion
+  135          | expresion • MAYOR_IGUAL expresion
+  136          | expresion • AND expresion
+  137          | expresion • OR expresion
+  141          | expresion • INCREMENTO
+  142          | expresion • DECREMENTO
+  145          | expresion • '(' argumentos ')'
+  146          | expresion • '[' expresion ']'
+  147          | expresion • '.' IDENTIFICADOR
+
+    INCREMENTO   shift, and go to state 92
+    DECREMENTO   shift, and go to state 93
+    IGUALDAD     shift, and go to state 94
+    DIFERENTE    shift, and go to state 95
+    MENOR_IGUAL  shift, and go to state 96
+    MAYOR_IGUAL  shift, and go to state 97
+    AND          shift, and go to state 98
+    OR           shift, and go to state 99
+    '<'          shift, and go to state 100
+    '>'          shift, and go to state 101
+    '+'          shift, and go to state 102
+    '-'          shift, and go to state 103
+    '*'          shift, and go to state 104
+    '/'          shift, and go to state 105
+    '%'          shift, and go to state 106
+    '.'          shift, and go to state 107
+    '('          shift, and go to state 108
+    '['          shift, and go to state 109
+
+    $default  reduce using rule 25 (var_spec)
+
+
+State 143
+
+   34 const_spec: IDENTIFICADOR tipo '=' expresion •
+  125 expresion: expresion • '+' expresion
+  126          | expresion • '-' expresion
+  127          | expresion • '*' expresion
+  128          | expresion • '/' expresion
+  129          | expresion • '%' expresion
+  130          | expresion • IGUALDAD expresion
+  131          | expresion • DIFERENTE expresion
+  132          | expresion • '<' expresion
+  133          | expresion • '>' expresion
+  134          | expresion • MENOR_IGUAL expresion
+  135          | expresion • MAYOR_IGUAL expresion
+  136          | expresion • AND expresion
+  137          | expresion • OR expresion
+  141          | expresion • INCREMENTO
+  142          | expresion • DECREMENTO
+  145          | expresion • '(' argumentos ')'
+  146          | expresion • '[' expresion ']'
+  147          | expresion • '.' IDENTIFICADOR
+
+    INCREMENTO   shift, and go to state 92
+    DECREMENTO   shift, and go to state 93
+    IGUALDAD     shift, and go to state 94
+    DIFERENTE    shift, and go to state 95
+    MENOR_IGUAL  shift, and go to state 96
+    MAYOR_IGUAL  shift, and go to state 97
+    AND          shift, and go to state 98
+    OR           shift, and go to state 99
+    '<'          shift, and go to state 100
+    '>'          shift, and go to state 101
+    '+'          shift, and go to state 102
+    '-'          shift, and go to state 103
+    '*'          shift, and go to state 104
+    '/'          shift, and go to state 105
+    '%'          shift, and go to state 106
+    '.'          shift, and go to state 107
+    '('          shift, and go to state 108
+    '['          shift, and go to state 109
+
+    $default  reduce using rule 34 (const_spec)
+
+
+State 144
+
+   47 parametro: IDENTIFICADOR ',' IDENTIFICADOR • tipo
+
+    IDENTIFICADOR  shift, and go to state 35
+    TIPO_DATO      shift, and go to state 36
+    '['            shift, and go to state 37
+
+    tipo  go to state 155
+
+
+State 145
+
+   49 tipo_retorno: '(' • lista_tipos ')'
+
+    IDENTIFICADOR  shift, and go to state 35
+    TIPO_DATO      shift, and go to state 36
+    '['            shift, and go to state 37
+
+    lista_tipos  go to state 156
+    tipo         go to state 157
+
+
+State 146
+
+   39 funcion: FUNC IDENTIFICADOR $@3 '(' parametros ')' opt_tipo_retorno • bloque
+
+    '{'  shift, and go to state 158
+
+    bloque  go to state 159
+
+
+State 147
+
+   40 opt_tipo_retorno: tipo_retorno •
+
+    $default  reduce using rule 40 (opt_tipo_retorno)
+
+
+State 148
+
+   48 tipo_retorno: tipo •
+
+    $default  reduce using rule 48 (tipo_retorno)
+
+
+State 149
+
+   44 lista_parametros: lista_parametros ',' parametro •
+
+    $default  reduce using rule 44 (lista_parametros)
+
+
+State 150
+
+  149 expresion: IDENTIFICADOR '(' expresion ')' •
+
+    $default  reduce using rule 149 (expresion)
+
+
+State 151
+
+  148 expresion: TIPO_DATO '(' expresion ')' •
+
+    $default  reduce using rule 148 (expresion)
+
+
+State 152
+
+  145 expresion: expresion '(' argumentos ')' •
+
+    $default  reduce using rule 145 (expresion)
+
+
+State 153
+
+  152 lista_argumentos: lista_argumentos ',' • expresion
+
+    IDENTIFICADOR  shift, and go to state 52
+    TIPO_DATO      shift, and go to state 53
+    CADENA         shift, and go to state 54
+    ENTERO         shift, and go to state 55
+    TRUE           shift, and go to state 56
+    FALSE          shift, and go to state 57
+    REAL           shift, and go to state 58
+    CARACTER       shift, and go to state 59
+    INCREMENTO     shift, and go to state 60
+    DECREMENTO     shift, and go to state 61
+    '+'            shift, and go to state 62
+    '-'            shift, and go to state 63
+    '!'            shift, and go to state 64
+    '('            shift, and go to state 65
+
+    expresion  go to state 160
+
+
+State 154
+
+  146 expresion: expresion '[' expresion ']' •
+
+    $default  reduce using rule 146 (expresion)
+
+
+State 155
+
+   47 parametro: IDENTIFICADOR ',' IDENTIFICADOR tipo •
+
+    $default  reduce using rule 47 (parametro)
+
+
+State 156
+
+   49 tipo_retorno: '(' lista_tipos • ')'
+   50 lista_tipos: lista_tipos • ',' tipo
+
+    ')'  shift, and go to state 161
+    ','  shift, and go to state 162
+
+
+State 157
+
+   51 lista_tipos: tipo •
+
+    $default  reduce using rule 51 (lista_tipos)
+
+
+State 158
+
+   68 bloque: '{' • $@4 sentencias '}'
+
+    $default  reduce using rule 67 ($@4)
+
+    $@4  go to state 163
+
+
+State 159
+
+   39 funcion: FUNC IDENTIFICADOR $@3 '(' parametros ')' opt_tipo_retorno bloque •
+
+    $default  reduce using rule 39 (funcion)
+
+
+State 160
+
+  125 expresion: expresion • '+' expresion
+  126          | expresion • '-' expresion
+  127          | expresion • '*' expresion
+  128          | expresion • '/' expresion
+  129          | expresion • '%' expresion
+  130          | expresion • IGUALDAD expresion
+  131          | expresion • DIFERENTE expresion
+  132          | expresion • '<' expresion
+  133          | expresion • '>' expresion
+  134          | expresion • MENOR_IGUAL expresion
+  135          | expresion • MAYOR_IGUAL expresion
+  136          | expresion • AND expresion
+  137          | expresion • OR expresion
+  141          | expresion • INCREMENTO
+  142          | expresion • DECREMENTO
+  145          | expresion • '(' argumentos ')'
+  146          | expresion • '[' expresion ']'
+  147          | expresion • '.' IDENTIFICADOR
+  152 lista_argumentos: lista_argumentos ',' expresion •
+
+    INCREMENTO   shift, and go to state 92
+    DECREMENTO   shift, and go to state 93
+    IGUALDAD     shift, and go to state 94
+    DIFERENTE    shift, and go to state 95
+    MENOR_IGUAL  shift, and go to state 96
+    MAYOR_IGUAL  shift, and go to state 97
+    AND          shift, and go to state 98
+    OR           shift, and go to state 99
+    '<'          shift, and go to state 100
+    '>'          shift, and go to state 101
+    '+'          shift, and go to state 102
+    '-'          shift, and go to state 103
+    '*'          shift, and go to state 104
+    '/'          shift, and go to state 105
+    '%'          shift, and go to state 106
+    '.'          shift, and go to state 107
+    '('          shift, and go to state 108
+    '['          shift, and go to state 109
+
+    $default  reduce using rule 152 (lista_argumentos)
+
+
+State 161
+
+   49 tipo_retorno: '(' lista_tipos ')' •
+
+    $default  reduce using rule 49 (tipo_retorno)
+
+
+State 162
+
+   50 lista_tipos: lista_tipos ',' • tipo
+
+    IDENTIFICADOR  shift, and go to state 35
+    TIPO_DATO      shift, and go to state 36
+    '['            shift, and go to state 37
+
+    tipo  go to state 164
+
+
+State 163
+
+   68 bloque: '{' $@4 • sentencias '}'
+
+    $default  reduce using rule 70 (sentencias)
+
+    sentencias  go to state 165
+
+
+State 164
+
+   50 lista_tipos: lista_tipos ',' tipo •
+
+    $default  reduce using rule 50 (lista_tipos)
+
+
+State 165
+
+   68 bloque: '{' $@4 sentencias • '}'
+   69 sentencias: sentencias • sentencia
+
+    IDENTIFICADOR  shift, and go to state 166
+    TIPO_DATO      shift, and go to state 53
+    CADENA         shift, and go to state 54
+    ENTERO         shift, and go to state 55
+    TRUE           shift, and go to state 56
+    FALSE          shift, and go to state 57
+    REAL           shift, and go to state 58
+    CARACTER       shift, and go to state 59
+    VAR            shift, and go to state 167
+    CONST          shift, and go to state 168
+    IF             shift, and go to state 169
+    FOR            shift, and go to state 170
+    SWITCH         shift, and go to state 171
+    RETURN         shift, and go to state 172
+    BREAK          shift, and go to state 173
+    CONTINUE       shift, and go to state 174
+    INCREMENTO     shift, and go to state 60
+    DECREMENTO     shift, and go to state 61
+    '+'            shift, and go to state 62
+    '-'            shift, and go to state 63
+    '!'            shift, and go to state 64
+    '('            shift, and go to state 65
+    '{'            shift, and go to state 158
+    '}'            shift, and go to state 175
+
+    variable                    go to state 176
+    lista_ids                   go to state 177
+    constante                   go to state 178
+    bloque                      go to state 179
+    sentencia                   go to state 180
+    declaracion_corta           go to state 181
+    declaracion_corta_multiple  go to state 182
+    asignacion                  go to state 183
+    asignacion_multiple         go to state 184
+    expresion                   go to state 185
+
+
+State 166
+
+   58 lista_ids: IDENTIFICADOR • ',' IDENTIFICADOR
+   94 declaracion_corta: IDENTIFICADOR • DECLARACION_CORTA expresion
+  117 expresion: IDENTIFICADOR •
+  149          | IDENTIFICADOR • '(' expresion ')'
+
+    DECLARACION_CORTA  shift, and go to state 186
+    '('                shift, and go to state 84
+    ','                shift, and go to state 187
+
+    '('       [reduce using rule 117 (expresion)]
+    $default  reduce using rule 117 (expresion)
+
+
+State 167
+
+   52 variable: VAR • IDENTIFICADOR tipo '=' expresion
+   53         | VAR • IDENTIFICADOR '=' expresion
+   54         | VAR • IDENTIFICADOR tipo
+   55         | VAR • lista_ids tipo
+   56         | VAR • lista_ids '=' lista_expresiones
+
+    IDENTIFICADOR  shift, and go to state 188
+
+    lista_ids  go to state 189
+
+
+State 168
+
+   61 constante: CONST • IDENTIFICADOR tipo '=' expresion
+   62          | CONST • IDENTIFICADOR '=' expresion
+
+    IDENTIFICADOR  shift, and go to state 190
+
+
+State 169
+
+   74 sentencia: IF • expresion $@5 bloque
+   76          | IF • expresion $@6 bloque ELSE bloque
+   78          | IF • expresion $@7 bloque ELSE sentencia
+
+    IDENTIFICADOR  shift, and go to state 52
+    TIPO_DATO      shift, and go to state 53
+    CADENA         shift, and go to state 54
+    ENTERO         shift, and go to state 55
+    TRUE           shift, and go to state 56
+    FALSE          shift, and go to state 57
+    REAL           shift, and go to state 58
+    CARACTER       shift, and go to state 59
+    INCREMENTO     shift, and go to state 60
+    DECREMENTO     shift, and go to state 61
+    '+'            shift, and go to state 62
+    '-'            shift, and go to state 63
+    '!'            shift, and go to state 64
+    '('            shift, and go to state 65
+
+    expresion  go to state 191
+
+
+State 170
+
+   80 sentencia: FOR • expresion $@8 bloque
+   81          | FOR • bloque
+   82          | FOR • inicializacion ';' condicion ';' post_iteracion bloque
+
+    IDENTIFICADOR  shift, and go to state 166
+    TIPO_DATO      shift, and go to state 53
+    CADENA         shift, and go to state 54
+    ENTERO         shift, and go to state 55
+    TRUE           shift, and go to state 56
+    FALSE          shift, and go to state 57
+    REAL           shift, and go to state 58
+    CARACTER       shift, and go to state 59
+    INCREMENTO     shift, and go to state 60
+    DECREMENTO     shift, and go to state 61
+    '+'            shift, and go to state 62
+    '-'            shift, and go to state 63
+    '!'            shift, and go to state 64
+    '('            shift, and go to state 65
+    '{'            shift, and go to state 158
+
+    $default  reduce using rule 107 (inicializacion)
+
+    lista_ids                   go to state 177
+    bloque                      go to state 192
+    declaracion_corta           go to state 193
+    declaracion_corta_multiple  go to state 194
+    asignacion                  go to state 195
+    asignacion_multiple         go to state 196
+    inicializacion              go to state 197
+    expresion                   go to state 198
+
+
+State 171
+
+   83 sentencia: SWITCH • expresion '{' casos '}'
+
+    IDENTIFICADOR  shift, and go to state 52
+    TIPO_DATO      shift, and go to state 53
+    CADENA         shift, and go to state 54
+    ENTERO         shift, and go to state 55
+    TRUE           shift, and go to state 56
+    FALSE          shift, and go to state 57
+    REAL           shift, and go to state 58
+    CARACTER       shift, and go to state 59
+    INCREMENTO     shift, and go to state 60
+    DECREMENTO     shift, and go to state 61
+    '+'            shift, and go to state 62
+    '-'            shift, and go to state 63
+    '!'            shift, and go to state 64
+    '('            shift, and go to state 65
+
+    expresion  go to state 199
+
+
+State 172
+
+   71 sentencia: RETURN • expresion
+   72          | RETURN •
+
+    IDENTIFICADOR  shift, and go to state 52
+    TIPO_DATO      shift, and go to state 53
+    CADENA         shift, and go to state 54
+    ENTERO         shift, and go to state 55
+    TRUE           shift, and go to state 56
+    FALSE          shift, and go to state 57
+    REAL           shift, and go to state 58
+    CARACTER       shift, and go to state 59
+    INCREMENTO     shift, and go to state 60
+    DECREMENTO     shift, and go to state 61
+    '+'            shift, and go to state 62
+    '-'            shift, and go to state 63
+    '!'            shift, and go to state 64
+    '('            shift, and go to state 65
+
+    IDENTIFICADOR  [reduce using rule 72 (sentencia)]
+    TIPO_DATO      [reduce using rule 72 (sentencia)]
+    CADENA         [reduce using rule 72 (sentencia)]
+    ENTERO         [reduce using rule 72 (sentencia)]
+    TRUE           [reduce using rule 72 (sentencia)]
+    FALSE          [reduce using rule 72 (sentencia)]
+    REAL           [reduce using rule 72 (sentencia)]
+    CARACTER       [reduce using rule 72 (sentencia)]
+    INCREMENTO     [reduce using rule 72 (sentencia)]
+    DECREMENTO     [reduce using rule 72 (sentencia)]
+    '+'            [reduce using rule 72 (sentencia)]
+    '-'            [reduce using rule 72 (sentencia)]
+    '!'            [reduce using rule 72 (sentencia)]
+    '('            [reduce using rule 72 (sentencia)]
+    $default       reduce using rule 72 (sentencia)
+
+    expresion  go to state 200
+
+
+State 173
+
+   91 sentencia: BREAK •
+
+    $default  reduce using rule 91 (sentencia)
+
+
+State 174
+
+   92 sentencia: CONTINUE •
+
+    $default  reduce using rule 92 (sentencia)
+
+
+State 175
+
+   68 bloque: '{' $@4 sentencias '}' •
+
+    $default  reduce using rule 68 (bloque)
+
+
+State 176
+
+   89 sentencia: variable •
+
+    $default  reduce using rule 89 (sentencia)
+
+
+State 177
+
+   57 lista_ids: lista_ids • ',' IDENTIFICADOR
+   95 declaracion_corta_multiple: lista_ids • DECLARACION_CORTA lista_expresiones
+  102 asignacion_multiple: lista_ids • '=' lista_expresiones
+
+    DECLARACION_CORTA  shift, and go to state 201
+    '='                shift, and go to state 202
+    ','                shift, and go to state 203
+
+
+State 178
+
+   90 sentencia: constante •
+
+    $default  reduce using rule 90 (sentencia)
+
+
+State 179
+
+   93 sentencia: bloque •
+
+    $default  reduce using rule 93 (sentencia)
+
+
+State 180
+
+   69 sentencias: sentencias sentencia •
+
+    $default  reduce using rule 69 (sentencias)
+
+
+State 181
+
+   85 sentencia: declaracion_corta •
+
+    $default  reduce using rule 85 (sentencia)
+
+
+State 182
+
+   86 sentencia: declaracion_corta_multiple •
+
+    $default  reduce using rule 86 (sentencia)
+
+
+State 183
+
+   87 sentencia: asignacion •
+
+    $default  reduce using rule 87 (sentencia)
+
+
+State 184
+
+   88 sentencia: asignacion_multiple •
+
+    $default  reduce using rule 88 (sentencia)
+
+
+State 185
+
+   84 sentencia: expresion •
+   96 asignacion: expresion • '=' expresion
+   97           | expresion • MAS_IGUAL expresion
+   98           | expresion • MENOS_IGUAL expresion
+   99           | expresion • POR_IGUAL expresion
+  100           | expresion • DIV_IGUAL expresion
+  101           | expresion • MOD_IGUAL expresion
+  125 expresion: expresion • '+' expresion
+  126          | expresion • '-' expresion
+  127          | expresion • '*' expresion
+  128          | expresion • '/' expresion
+  129          | expresion • '%' expresion
+  130          | expresion • IGUALDAD expresion
+  131          | expresion • DIFERENTE expresion
+  132          | expresion • '<' expresion
+  133          | expresion • '>' expresion
+  134          | expresion • MENOR_IGUAL expresion
+  135          | expresion • MAYOR_IGUAL expresion
+  136          | expresion • AND expresion
+  137          | expresion • OR expresion
+  141          | expresion • INCREMENTO
+  142          | expresion • DECREMENTO
+  145          | expresion • '(' argumentos ')'
+  146          | expresion • '[' expresion ']'
+  147          | expresion • '.' IDENTIFICADOR
+
+    INCREMENTO   shift, and go to state 92
+    DECREMENTO   shift, and go to state 93
+    MAS_IGUAL    shift, and go to state 204
+    MENOS_IGUAL  shift, and go to state 205
+    POR_IGUAL    shift, and go to state 206
+    DIV_IGUAL    shift, and go to state 207
+    MOD_IGUAL    shift, and go to state 208
+    IGUALDAD     shift, and go to state 94
+    DIFERENTE    shift, and go to state 95
+    MENOR_IGUAL  shift, and go to state 96
+    MAYOR_IGUAL  shift, and go to state 97
+    AND          shift, and go to state 98
+    OR           shift, and go to state 99
+    '<'          shift, and go to state 100
+    '>'          shift, and go to state 101
+    '+'          shift, and go to state 102
+    '-'          shift, and go to state 103
+    '*'          shift, and go to state 104
+    '/'          shift, and go to state 105
+    '%'          shift, and go to state 106
+    '.'          shift, and go to state 107
+    '('          shift, and go to state 108
+    '['          shift, and go to state 109
+    '='          shift, and go to state 209
+
+    INCREMENTO  [reduce using rule 84 (sentencia)]
+    DECREMENTO  [reduce using rule 84 (sentencia)]
+    '+'         [reduce using rule 84 (sentencia)]
+    '-'         [reduce using rule 84 (sentencia)]
+    '('         [reduce using rule 84 (sentencia)]
+    $default    reduce using rule 84 (sentencia)
+
+
+State 186
+
+   94 declaracion_corta: IDENTIFICADOR DECLARACION_CORTA • expresion
+
+    IDENTIFICADOR  shift, and go to state 52
+    TIPO_DATO      shift, and go to state 53
+    CADENA         shift, and go to state 54
+    ENTERO         shift, and go to state 55
+    TRUE           shift, and go to state 56
+    FALSE          shift, and go to state 57
+    REAL           shift, and go to state 58
+    CARACTER       shift, and go to state 59
+    INCREMENTO     shift, and go to state 60
+    DECREMENTO     shift, and go to state 61
+    '+'            shift, and go to state 62
+    '-'            shift, and go to state 63
+    '!'            shift, and go to state 64
+    '('            shift, and go to state 65
+
+    expresion  go to state 210
+
+
+State 187
+
+   58 lista_ids: IDENTIFICADOR ',' • IDENTIFICADOR
+
+    IDENTIFICADOR  shift, and go to state 211
+
+
+State 188
+
+   52 variable: VAR IDENTIFICADOR • tipo '=' expresion
+   53         | VAR IDENTIFICADOR • '=' expresion
+   54         | VAR IDENTIFICADOR • tipo
+   58 lista_ids: IDENTIFICADOR • ',' IDENTIFICADOR
+
+    IDENTIFICADOR  shift, and go to state 35
+    TIPO_DATO      shift, and go to state 36
+    '['            shift, and go to state 37
+    '='            shift, and go to state 212
+    ','            shift, and go to state 187
+
+    tipo  go to state 213
+
+
+State 189
+
+   55 variable: VAR lista_ids • tipo
+   56         | VAR lista_ids • '=' lista_expresiones
+   57 lista_ids: lista_ids • ',' IDENTIFICADOR
+
+    IDENTIFICADOR  shift, and go to state 35
+    TIPO_DATO      shift, and go to state 36
+    '['            shift, and go to state 37
+    '='            shift, and go to state 214
+    ','            shift, and go to state 203
+
+    tipo  go to state 215
+
+
+State 190
+
+   61 constante: CONST IDENTIFICADOR • tipo '=' expresion
+   62          | CONST IDENTIFICADOR • '=' expresion
+
+    IDENTIFICADOR  shift, and go to state 35
+    TIPO_DATO      shift, and go to state 36
+    '['            shift, and go to state 37
+    '='            shift, and go to state 216
+
+    tipo  go to state 217
+
+
+State 191
+
+   74 sentencia: IF expresion • $@5 bloque
+   76          | IF expresion • $@6 bloque ELSE bloque
+   78          | IF expresion • $@7 bloque ELSE sentencia
+  125 expresion: expresion • '+' expresion
+  126          | expresion • '-' expresion
+  127          | expresion • '*' expresion
+  128          | expresion • '/' expresion
+  129          | expresion • '%' expresion
+  130          | expresion • IGUALDAD expresion
+  131          | expresion • DIFERENTE expresion
+  132          | expresion • '<' expresion
+  133          | expresion • '>' expresion
+  134          | expresion • MENOR_IGUAL expresion
+  135          | expresion • MAYOR_IGUAL expresion
+  136          | expresion • AND expresion
+  137          | expresion • OR expresion
+  141          | expresion • INCREMENTO
+  142          | expresion • DECREMENTO
+  145          | expresion • '(' argumentos ')'
+  146          | expresion • '[' expresion ']'
+  147          | expresion • '.' IDENTIFICADOR
+
+    INCREMENTO   shift, and go to state 92
+    DECREMENTO   shift, and go to state 93
+    IGUALDAD     shift, and go to state 94
+    DIFERENTE    shift, and go to state 95
+    MENOR_IGUAL  shift, and go to state 96
+    MAYOR_IGUAL  shift, and go to state 97
+    AND          shift, and go to state 98
+    OR           shift, and go to state 99
+    '<'          shift, and go to state 100
+    '>'          shift, and go to state 101
+    '+'          shift, and go to state 102
+    '-'          shift, and go to state 103
+    '*'          shift, and go to state 104
+    '/'          shift, and go to state 105
+    '%'          shift, and go to state 106
+    '.'          shift, and go to state 107
+    '('          shift, and go to state 108
+    '['          shift, and go to state 109
+
+    '{'       reduce using rule 73 ($@5)
+    '{'       [reduce using rule 75 ($@6)]
+    '{'       [reduce using rule 77 ($@7)]
+    $default  reduce using rule 73 ($@5)
+
+    $@5  go to state 218
+    $@6  go to state 219
+    $@7  go to state 220
+
+
+State 192
+
+   81 sentencia: FOR bloque •
+
+    $default  reduce using rule 81 (sentencia)
+
+
+State 193
+
+  103 inicializacion: declaracion_corta •
+
+    $default  reduce using rule 103 (inicializacion)
+
+
+State 194
+
+  104 inicializacion: declaracion_corta_multiple •
+
+    $default  reduce using rule 104 (inicializacion)
+
+
+State 195
+
+  105 inicializacion: asignacion •
+
+    $default  reduce using rule 105 (inicializacion)
+
+
+State 196
+
+  106 inicializacion: asignacion_multiple •
+
+    $default  reduce using rule 106 (inicializacion)
+
+
+State 197
+
+   82 sentencia: FOR inicializacion • ';' condicion ';' post_iteracion bloque
+
+    ';'  shift, and go to state 221
+
+
+State 198
+
+   80 sentencia: FOR expresion • $@8 bloque
+   96 asignacion: expresion • '=' expresion
+   97           | expresion • MAS_IGUAL expresion
+   98           | expresion • MENOS_IGUAL expresion
+   99           | expresion • POR_IGUAL expresion
+  100           | expresion • DIV_IGUAL expresion
+  101           | expresion • MOD_IGUAL expresion
+  125 expresion: expresion • '+' expresion
+  126          | expresion • '-' expresion
+  127          | expresion • '*' expresion
+  128          | expresion • '/' expresion
+  129          | expresion • '%' expresion
+  130          | expresion • IGUALDAD expresion
+  131          | expresion • DIFERENTE expresion
+  132          | expresion • '<' expresion
+  133          | expresion • '>' expresion
+  134          | expresion • MENOR_IGUAL expresion
+  135          | expresion • MAYOR_IGUAL expresion
+  136          | expresion • AND expresion
+  137          | expresion • OR expresion
+  141          | expresion • INCREMENTO
+  142          | expresion • DECREMENTO
+  145          | expresion • '(' argumentos ')'
+  146          | expresion • '[' expresion ']'
+  147          | expresion • '.' IDENTIFICADOR
+
+    INCREMENTO   shift, and go to state 92
+    DECREMENTO   shift, and go to state 93
+    MAS_IGUAL    shift, and go to state 204
+    MENOS_IGUAL  shift, and go to state 205
+    POR_IGUAL    shift, and go to state 206
+    DIV_IGUAL    shift, and go to state 207
+    MOD_IGUAL    shift, and go to state 208
+    IGUALDAD     shift, and go to state 94
+    DIFERENTE    shift, and go to state 95
+    MENOR_IGUAL  shift, and go to state 96
+    MAYOR_IGUAL  shift, and go to state 97
+    AND          shift, and go to state 98
+    OR           shift, and go to state 99
+    '<'          shift, and go to state 100
+    '>'          shift, and go to state 101
+    '+'          shift, and go to state 102
+    '-'          shift, and go to state 103
+    '*'          shift, and go to state 104
+    '/'          shift, and go to state 105
+    '%'          shift, and go to state 106
+    '.'          shift, and go to state 107
+    '('          shift, and go to state 108
+    '['          shift, and go to state 109
+    '='          shift, and go to state 209
+
+    $default  reduce using rule 79 ($@8)
+
+    $@8  go to state 222
+
+
+State 199
+
+   83 sentencia: SWITCH expresion • '{' casos '}'
+  125 expresion: expresion • '+' expresion
+  126          | expresion • '-' expresion
+  127          | expresion • '*' expresion
+  128          | expresion • '/' expresion
+  129          | expresion • '%' expresion
+  130          | expresion • IGUALDAD expresion
+  131          | expresion • DIFERENTE expresion
+  132          | expresion • '<' expresion
+  133          | expresion • '>' expresion
+  134          | expresion • MENOR_IGUAL expresion
+  135          | expresion • MAYOR_IGUAL expresion
+  136          | expresion • AND expresion
+  137          | expresion • OR expresion
+  141          | expresion • INCREMENTO
+  142          | expresion • DECREMENTO
+  145          | expresion • '(' argumentos ')'
+  146          | expresion • '[' expresion ']'
+  147          | expresion • '.' IDENTIFICADOR
+
+    INCREMENTO   shift, and go to state 92
+    DECREMENTO   shift, and go to state 93
+    IGUALDAD     shift, and go to state 94
+    DIFERENTE    shift, and go to state 95
+    MENOR_IGUAL  shift, and go to state 96
+    MAYOR_IGUAL  shift, and go to state 97
+    AND          shift, and go to state 98
+    OR           shift, and go to state 99
+    '<'          shift, and go to state 100
+    '>'          shift, and go to state 101
+    '+'          shift, and go to state 102
+    '-'          shift, and go to state 103
+    '*'          shift, and go to state 104
+    '/'          shift, and go to state 105
+    '%'          shift, and go to state 106
+    '.'          shift, and go to state 107
+    '('          shift, and go to state 108
+    '['          shift, and go to state 109
+    '{'          shift, and go to state 223
+
+
+State 200
+
+   71 sentencia: RETURN expresion •
+  125 expresion: expresion • '+' expresion
+  126          | expresion • '-' expresion
+  127          | expresion • '*' expresion
+  128          | expresion • '/' expresion
+  129          | expresion • '%' expresion
+  130          | expresion • IGUALDAD expresion
+  131          | expresion • DIFERENTE expresion
+  132          | expresion • '<' expresion
+  133          | expresion • '>' expresion
+  134          | expresion • MENOR_IGUAL expresion
+  135          | expresion • MAYOR_IGUAL expresion
+  136          | expresion • AND expresion
+  137          | expresion • OR expresion
+  141          | expresion • INCREMENTO
+  142          | expresion • DECREMENTO
+  145          | expresion • '(' argumentos ')'
+  146          | expresion • '[' expresion ']'
+  147          | expresion • '.' IDENTIFICADOR
+
+    INCREMENTO   shift, and go to state 92
+    DECREMENTO   shift, and go to state 93
+    IGUALDAD     shift, and go to state 94
+    DIFERENTE    shift, and go to state 95
+    MENOR_IGUAL  shift, and go to state 96
+    MAYOR_IGUAL  shift, and go to state 97
+    AND          shift, and go to state 98
+    OR           shift, and go to state 99
+    '<'          shift, and go to state 100
+    '>'          shift, and go to state 101
+    '+'          shift, and go to state 102
+    '-'          shift, and go to state 103
+    '*'          shift, and go to state 104
+    '/'          shift, and go to state 105
+    '%'          shift, and go to state 106
+    '.'          shift, and go to state 107
+    '('          shift, and go to state 108
+    '['          shift, and go to state 109
+
+    INCREMENTO  [reduce using rule 71 (sentencia)]
+    DECREMENTO  [reduce using rule 71 (sentencia)]
+    '+'         [reduce using rule 71 (sentencia)]
+    '-'         [reduce using rule 71 (sentencia)]
+    '('         [reduce using rule 71 (sentencia)]
+    $default    reduce using rule 71 (sentencia)
+
+
+State 201
+
+   95 declaracion_corta_multiple: lista_ids DECLARACION_CORTA • lista_expresiones
+
+    IDENTIFICADOR  shift, and go to state 52
+    TIPO_DATO      shift, and go to state 53
+    CADENA         shift, and go to state 54
+    ENTERO         shift, and go to state 55
+    TRUE           shift, and go to state 56
+    FALSE          shift, and go to state 57
+    REAL           shift, and go to state 58
+    CARACTER       shift, and go to state 59
+    INCREMENTO     shift, and go to state 60
+    DECREMENTO     shift, and go to state 61
+    '+'            shift, and go to state 62
+    '-'            shift, and go to state 63
+    '!'            shift, and go to state 64
+    '('            shift, and go to state 65
+
+    lista_expresiones  go to state 224
+    expresion          go to state 225
+
+
+State 202
+
+  102 asignacion_multiple: lista_ids '=' • lista_expresiones
+
+    IDENTIFICADOR  shift, and go to state 52
+    TIPO_DATO      shift, and go to state 53
+    CADENA         shift, and go to state 54
+    ENTERO         shift, and go to state 55
+    TRUE           shift, and go to state 56
+    FALSE          shift, and go to state 57
+    REAL           shift, and go to state 58
+    CARACTER       shift, and go to state 59
+    INCREMENTO     shift, and go to state 60
+    DECREMENTO     shift, and go to state 61
+    '+'            shift, and go to state 62
+    '-'            shift, and go to state 63
+    '!'            shift, and go to state 64
+    '('            shift, and go to state 65
+
+    lista_expresiones  go to state 226
+    expresion          go to state 225
+
+
+State 203
+
+   57 lista_ids: lista_ids ',' • IDENTIFICADOR
+
+    IDENTIFICADOR  shift, and go to state 227
+
+
+State 204
+
+   97 asignacion: expresion MAS_IGUAL • expresion
+
+    IDENTIFICADOR  shift, and go to state 52
+    TIPO_DATO      shift, and go to state 53
+    CADENA         shift, and go to state 54
+    ENTERO         shift, and go to state 55
+    TRUE           shift, and go to state 56
+    FALSE          shift, and go to state 57
+    REAL           shift, and go to state 58
+    CARACTER       shift, and go to state 59
+    INCREMENTO     shift, and go to state 60
+    DECREMENTO     shift, and go to state 61
+    '+'            shift, and go to state 62
+    '-'            shift, and go to state 63
+    '!'            shift, and go to state 64
+    '('            shift, and go to state 65
+
+    expresion  go to state 228
+
+
+State 205
+
+   98 asignacion: expresion MENOS_IGUAL • expresion
+
+    IDENTIFICADOR  shift, and go to state 52
+    TIPO_DATO      shift, and go to state 53
+    CADENA         shift, and go to state 54
+    ENTERO         shift, and go to state 55
+    TRUE           shift, and go to state 56
+    FALSE          shift, and go to state 57
+    REAL           shift, and go to state 58
+    CARACTER       shift, and go to state 59
+    INCREMENTO     shift, and go to state 60
+    DECREMENTO     shift, and go to state 61
+    '+'            shift, and go to state 62
+    '-'            shift, and go to state 63
+    '!'            shift, and go to state 64
+    '('            shift, and go to state 65
+
+    expresion  go to state 229
+
+
+State 206
+
+   99 asignacion: expresion POR_IGUAL • expresion
+
+    IDENTIFICADOR  shift, and go to state 52
+    TIPO_DATO      shift, and go to state 53
+    CADENA         shift, and go to state 54
+    ENTERO         shift, and go to state 55
+    TRUE           shift, and go to state 56
+    FALSE          shift, and go to state 57
+    REAL           shift, and go to state 58
+    CARACTER       shift, and go to state 59
+    INCREMENTO     shift, and go to state 60
+    DECREMENTO     shift, and go to state 61
+    '+'            shift, and go to state 62
+    '-'            shift, and go to state 63
+    '!'            shift, and go to state 64
+    '('            shift, and go to state 65
+
+    expresion  go to state 230
+
+
+State 207
+
+  100 asignacion: expresion DIV_IGUAL • expresion
+
+    IDENTIFICADOR  shift, and go to state 52
+    TIPO_DATO      shift, and go to state 53
+    CADENA         shift, and go to state 54
+    ENTERO         shift, and go to state 55
+    TRUE           shift, and go to state 56
+    FALSE          shift, and go to state 57
+    REAL           shift, and go to state 58
+    CARACTER       shift, and go to state 59
+    INCREMENTO     shift, and go to state 60
+    DECREMENTO     shift, and go to state 61
+    '+'            shift, and go to state 62
+    '-'            shift, and go to state 63
+    '!'            shift, and go to state 64
+    '('            shift, and go to state 65
+
+    expresion  go to state 231
+
+
+State 208
+
+  101 asignacion: expresion MOD_IGUAL • expresion
+
+    IDENTIFICADOR  shift, and go to state 52
+    TIPO_DATO      shift, and go to state 53
+    CADENA         shift, and go to state 54
+    ENTERO         shift, and go to state 55
+    TRUE           shift, and go to state 56
+    FALSE          shift, and go to state 57
+    REAL           shift, and go to state 58
+    CARACTER       shift, and go to state 59
+    INCREMENTO     shift, and go to state 60
+    DECREMENTO     shift, and go to state 61
+    '+'            shift, and go to state 62
+    '-'            shift, and go to state 63
+    '!'            shift, and go to state 64
+    '('            shift, and go to state 65
+
+    expresion  go to state 232
+
+
+State 209
+
+   96 asignacion: expresion '=' • expresion
+
+    IDENTIFICADOR  shift, and go to state 52
+    TIPO_DATO      shift, and go to state 53
+    CADENA         shift, and go to state 54
+    ENTERO         shift, and go to state 55
+    TRUE           shift, and go to state 56
+    FALSE          shift, and go to state 57
+    REAL           shift, and go to state 58
+    CARACTER       shift, and go to state 59
+    INCREMENTO     shift, and go to state 60
+    DECREMENTO     shift, and go to state 61
+    '+'            shift, and go to state 62
+    '-'            shift, and go to state 63
+    '!'            shift, and go to state 64
+    '('            shift, and go to state 65
+
+    expresion  go to state 233
+
+
+State 210
+
+   94 declaracion_corta: IDENTIFICADOR DECLARACION_CORTA expresion •
+  125 expresion: expresion • '+' expresion
+  126          | expresion • '-' expresion
+  127          | expresion • '*' expresion
+  128          | expresion • '/' expresion
+  129          | expresion • '%' expresion
+  130          | expresion • IGUALDAD expresion
+  131          | expresion • DIFERENTE expresion
+  132          | expresion • '<' expresion
+  133          | expresion • '>' expresion
+  134          | expresion • MENOR_IGUAL expresion
+  135          | expresion • MAYOR_IGUAL expresion
+  136          | expresion • AND expresion
+  137          | expresion • OR expresion
+  141          | expresion • INCREMENTO
+  142          | expresion • DECREMENTO
+  145          | expresion • '(' argumentos ')'
+  146          | expresion • '[' expresion ']'
+  147          | expresion • '.' IDENTIFICADOR
+
+    INCREMENTO   shift, and go to state 92
+    DECREMENTO   shift, and go to state 93
+    IGUALDAD     shift, and go to state 94
+    DIFERENTE    shift, and go to state 95
+    MENOR_IGUAL  shift, and go to state 96
+    MAYOR_IGUAL  shift, and go to state 97
+    AND          shift, and go to state 98
+    OR           shift, and go to state 99
+    '<'          shift, and go to state 100
+    '>'          shift, and go to state 101
+    '+'          shift, and go to state 102
+    '-'          shift, and go to state 103
+    '*'          shift, and go to state 104
+    '/'          shift, and go to state 105
+    '%'          shift, and go to state 106
+    '.'          shift, and go to state 107
+    '('          shift, and go to state 108
+    '['          shift, and go to state 109
+
+    INCREMENTO  [reduce using rule 94 (declaracion_corta)]
+    DECREMENTO  [reduce using rule 94 (declaracion_corta)]
+    '+'         [reduce using rule 94 (declaracion_corta)]
+    '-'         [reduce using rule 94 (declaracion_corta)]
+    '('         [reduce using rule 94 (declaracion_corta)]
+    $default    reduce using rule 94 (declaracion_corta)
+
+
+State 211
+
+   58 lista_ids: IDENTIFICADOR ',' IDENTIFICADOR •
+
+    $default  reduce using rule 58 (lista_ids)
+
+
+State 212
+
+   53 variable: VAR IDENTIFICADOR '=' • expresion
+
+    IDENTIFICADOR  shift, and go to state 52
+    TIPO_DATO      shift, and go to state 53
+    CADENA         shift, and go to state 54
+    ENTERO         shift, and go to state 55
+    TRUE           shift, and go to state 56
+    FALSE          shift, and go to state 57
+    REAL           shift, and go to state 58
+    CARACTER       shift, and go to state 59
+    INCREMENTO     shift, and go to state 60
+    DECREMENTO     shift, and go to state 61
+    '+'            shift, and go to state 62
+    '-'            shift, and go to state 63
+    '!'            shift, and go to state 64
+    '('            shift, and go to state 65
+
+    expresion  go to state 234
+
+
+State 213
+
+   52 variable: VAR IDENTIFICADOR tipo • '=' expresion
+   54         | VAR IDENTIFICADOR tipo •
+
+    '='  shift, and go to state 235
+
+    $default  reduce using rule 54 (variable)
+
+
+State 214
+
+   56 variable: VAR lista_ids '=' • lista_expresiones
+
+    IDENTIFICADOR  shift, and go to state 52
+    TIPO_DATO      shift, and go to state 53
+    CADENA         shift, and go to state 54
+    ENTERO         shift, and go to state 55
+    TRUE           shift, and go to state 56
+    FALSE          shift, and go to state 57
+    REAL           shift, and go to state 58
+    CARACTER       shift, and go to state 59
+    INCREMENTO     shift, and go to state 60
+    DECREMENTO     shift, and go to state 61
+    '+'            shift, and go to state 62
+    '-'            shift, and go to state 63
+    '!'            shift, and go to state 64
+    '('            shift, and go to state 65
+
+    lista_expresiones  go to state 236
+    expresion          go to state 225
+
+
+State 215
+
+   55 variable: VAR lista_ids tipo •
+
+    $default  reduce using rule 55 (variable)
+
+
+State 216
+
+   62 constante: CONST IDENTIFICADOR '=' • expresion
+
+    IDENTIFICADOR  shift, and go to state 52
+    TIPO_DATO      shift, and go to state 53
+    CADENA         shift, and go to state 54
+    ENTERO         shift, and go to state 55
+    TRUE           shift, and go to state 56
+    FALSE          shift, and go to state 57
+    REAL           shift, and go to state 58
+    CARACTER       shift, and go to state 59
+    INCREMENTO     shift, and go to state 60
+    DECREMENTO     shift, and go to state 61
+    '+'            shift, and go to state 62
+    '-'            shift, and go to state 63
+    '!'            shift, and go to state 64
+    '('            shift, and go to state 65
+
+    expresion  go to state 237
+
+
+State 217
+
+   61 constante: CONST IDENTIFICADOR tipo • '=' expresion
+
+    '='  shift, and go to state 238
+
+
+State 218
+
+   74 sentencia: IF expresion $@5 • bloque
+
+    '{'  shift, and go to state 158
+
+    bloque  go to state 239
+
+
+State 219
+
+   76 sentencia: IF expresion $@6 • bloque ELSE bloque
+
+    '{'  shift, and go to state 158
+
+    bloque  go to state 240
+
+
+State 220
+
+   78 sentencia: IF expresion $@7 • bloque ELSE sentencia
+
+    '{'  shift, and go to state 158
+
+    bloque  go to state 241
+
+
+State 221
+
+   82 sentencia: FOR inicializacion ';' • condicion ';' post_iteracion bloque
+
+    IDENTIFICADOR  shift, and go to state 52
+    TIPO_DATO      shift, and go to state 53
+    CADENA         shift, and go to state 54
+    ENTERO         shift, and go to state 55
+    TRUE           shift, and go to state 56
+    FALSE          shift, and go to state 57
+    REAL           shift, and go to state 58
+    CARACTER       shift, and go to state 59
+    INCREMENTO     shift, and go to state 60
+    DECREMENTO     shift, and go to state 61
+    '+'            shift, and go to state 62
+    '-'            shift, and go to state 63
+    '!'            shift, and go to state 64
+    '('            shift, and go to state 65
+
+    $default  reduce using rule 109 (condicion)
+
+    condicion  go to state 242
+    expresion  go to state 243
+
+
+State 222
+
+   80 sentencia: FOR expresion $@8 • bloque
+
+    '{'  shift, and go to state 158
+
+    bloque  go to state 244
+
+
+State 223
+
+   83 sentencia: SWITCH expresion '{' • casos '}'
+
+    CASE     shift, and go to state 245
+    DEFAULT  shift, and go to state 246
+
+    casos  go to state 247
+    caso   go to state 248
+
+
+State 224
+
+   59 lista_expresiones: lista_expresiones • ',' expresion
+   95 declaracion_corta_multiple: lista_ids DECLARACION_CORTA lista_expresiones •
+
+    ','  shift, and go to state 249
+
+    $default  reduce using rule 95 (declaracion_corta_multiple)
+
+
+State 225
+
+   60 lista_expresiones: expresion • ',' expresion
+  125 expresion: expresion • '+' expresion
+  126          | expresion • '-' expresion
+  127          | expresion • '*' expresion
+  128          | expresion • '/' expresion
+  129          | expresion • '%' expresion
+  130          | expresion • IGUALDAD expresion
+  131          | expresion • DIFERENTE expresion
+  132          | expresion • '<' expresion
+  133          | expresion • '>' expresion
+  134          | expresion • MENOR_IGUAL expresion
+  135          | expresion • MAYOR_IGUAL expresion
+  136          | expresion • AND expresion
+  137          | expresion • OR expresion
+  141          | expresion • INCREMENTO
+  142          | expresion • DECREMENTO
+  145          | expresion • '(' argumentos ')'
+  146          | expresion • '[' expresion ']'
+  147          | expresion • '.' IDENTIFICADOR
+
+    INCREMENTO   shift, and go to state 92
+    DECREMENTO   shift, and go to state 93
+    IGUALDAD     shift, and go to state 94
+    DIFERENTE    shift, and go to state 95
+    MENOR_IGUAL  shift, and go to state 96
+    MAYOR_IGUAL  shift, and go to state 97
+    AND          shift, and go to state 98
+    OR           shift, and go to state 99
+    '<'          shift, and go to state 100
+    '>'          shift, and go to state 101
+    '+'          shift, and go to state 102
+    '-'          shift, and go to state 103
+    '*'          shift, and go to state 104
+    '/'          shift, and go to state 105
+    '%'          shift, and go to state 106
+    '.'          shift, and go to state 107
+    '('          shift, and go to state 108
+    '['          shift, and go to state 109
+    ','          shift, and go to state 250
+
+
+State 226
+
+   59 lista_expresiones: lista_expresiones • ',' expresion
+  102 asignacion_multiple: lista_ids '=' lista_expresiones •
+
+    ','  shift, and go to state 249
+
+    $default  reduce using rule 102 (asignacion_multiple)
+
+
+State 227
+
+   57 lista_ids: lista_ids ',' IDENTIFICADOR •
+
+    $default  reduce using rule 57 (lista_ids)
+
+
+State 228
+
+   97 asignacion: expresion MAS_IGUAL expresion •
+  125 expresion: expresion • '+' expresion
+  126          | expresion • '-' expresion
+  127          | expresion • '*' expresion
+  128          | expresion • '/' expresion
+  129          | expresion • '%' expresion
+  130          | expresion • IGUALDAD expresion
+  131          | expresion • DIFERENTE expresion
+  132          | expresion • '<' expresion
+  133          | expresion • '>' expresion
+  134          | expresion • MENOR_IGUAL expresion
+  135          | expresion • MAYOR_IGUAL expresion
+  136          | expresion • AND expresion
+  137          | expresion • OR expresion
+  141          | expresion • INCREMENTO
+  142          | expresion • DECREMENTO
+  145          | expresion • '(' argumentos ')'
+  146          | expresion • '[' expresion ']'
+  147          | expresion • '.' IDENTIFICADOR
+
+    INCREMENTO   shift, and go to state 92
+    DECREMENTO   shift, and go to state 93
+    IGUALDAD     shift, and go to state 94
+    DIFERENTE    shift, and go to state 95
+    MENOR_IGUAL  shift, and go to state 96
+    MAYOR_IGUAL  shift, and go to state 97
+    AND          shift, and go to state 98
+    OR           shift, and go to state 99
+    '<'          shift, and go to state 100
+    '>'          shift, and go to state 101
+    '+'          shift, and go to state 102
+    '-'          shift, and go to state 103
+    '*'          shift, and go to state 104
+    '/'          shift, and go to state 105
+    '%'          shift, and go to state 106
+    '.'          shift, and go to state 107
+    '('          shift, and go to state 108
+    '['          shift, and go to state 109
+
+    INCREMENTO  [reduce using rule 97 (asignacion)]
+    DECREMENTO  [reduce using rule 97 (asignacion)]
+    '+'         [reduce using rule 97 (asignacion)]
+    '-'         [reduce using rule 97 (asignacion)]
+    '('         [reduce using rule 97 (asignacion)]
+    $default    reduce using rule 97 (asignacion)
+
+
+State 229
+
+   98 asignacion: expresion MENOS_IGUAL expresion •
+  125 expresion: expresion • '+' expresion
+  126          | expresion • '-' expresion
+  127          | expresion • '*' expresion
+  128          | expresion • '/' expresion
+  129          | expresion • '%' expresion
+  130          | expresion • IGUALDAD expresion
+  131          | expresion • DIFERENTE expresion
+  132          | expresion • '<' expresion
+  133          | expresion • '>' expresion
+  134          | expresion • MENOR_IGUAL expresion
+  135          | expresion • MAYOR_IGUAL expresion
+  136          | expresion • AND expresion
+  137          | expresion • OR expresion
+  141          | expresion • INCREMENTO
+  142          | expresion • DECREMENTO
+  145          | expresion • '(' argumentos ')'
+  146          | expresion • '[' expresion ']'
+  147          | expresion • '.' IDENTIFICADOR
+
+    INCREMENTO   shift, and go to state 92
+    DECREMENTO   shift, and go to state 93
+    IGUALDAD     shift, and go to state 94
+    DIFERENTE    shift, and go to state 95
+    MENOR_IGUAL  shift, and go to state 96
+    MAYOR_IGUAL  shift, and go to state 97
+    AND          shift, and go to state 98
+    OR           shift, and go to state 99
+    '<'          shift, and go to state 100
+    '>'          shift, and go to state 101
+    '+'          shift, and go to state 102
+    '-'          shift, and go to state 103
+    '*'          shift, and go to state 104
+    '/'          shift, and go to state 105
+    '%'          shift, and go to state 106
+    '.'          shift, and go to state 107
+    '('          shift, and go to state 108
+    '['          shift, and go to state 109
+
+    INCREMENTO  [reduce using rule 98 (asignacion)]
+    DECREMENTO  [reduce using rule 98 (asignacion)]
+    '+'         [reduce using rule 98 (asignacion)]
+    '-'         [reduce using rule 98 (asignacion)]
+    '('         [reduce using rule 98 (asignacion)]
+    $default    reduce using rule 98 (asignacion)
+
+
+State 230
+
+   99 asignacion: expresion POR_IGUAL expresion •
+  125 expresion: expresion • '+' expresion
+  126          | expresion • '-' expresion
+  127          | expresion • '*' expresion
+  128          | expresion • '/' expresion
+  129          | expresion • '%' expresion
+  130          | expresion • IGUALDAD expresion
+  131          | expresion • DIFERENTE expresion
+  132          | expresion • '<' expresion
+  133          | expresion • '>' expresion
+  134          | expresion • MENOR_IGUAL expresion
+  135          | expresion • MAYOR_IGUAL expresion
+  136          | expresion • AND expresion
+  137          | expresion • OR expresion
+  141          | expresion • INCREMENTO
+  142          | expresion • DECREMENTO
+  145          | expresion • '(' argumentos ')'
+  146          | expresion • '[' expresion ']'
+  147          | expresion • '.' IDENTIFICADOR
+
+    INCREMENTO   shift, and go to state 92
+    DECREMENTO   shift, and go to state 93
+    IGUALDAD     shift, and go to state 94
+    DIFERENTE    shift, and go to state 95
+    MENOR_IGUAL  shift, and go to state 96
+    MAYOR_IGUAL  shift, and go to state 97
+    AND          shift, and go to state 98
+    OR           shift, and go to state 99
+    '<'          shift, and go to state 100
+    '>'          shift, and go to state 101
+    '+'          shift, and go to state 102
+    '-'          shift, and go to state 103
+    '*'          shift, and go to state 104
+    '/'          shift, and go to state 105
+    '%'          shift, and go to state 106
+    '.'          shift, and go to state 107
+    '('          shift, and go to state 108
+    '['          shift, and go to state 109
+
+    INCREMENTO  [reduce using rule 99 (asignacion)]
+    DECREMENTO  [reduce using rule 99 (asignacion)]
+    '+'         [reduce using rule 99 (asignacion)]
+    '-'         [reduce using rule 99 (asignacion)]
+    '('         [reduce using rule 99 (asignacion)]
+    $default    reduce using rule 99 (asignacion)
+
+
+State 231
+
+  100 asignacion: expresion DIV_IGUAL expresion •
+  125 expresion: expresion • '+' expresion
+  126          | expresion • '-' expresion
+  127          | expresion • '*' expresion
+  128          | expresion • '/' expresion
+  129          | expresion • '%' expresion
+  130          | expresion • IGUALDAD expresion
+  131          | expresion • DIFERENTE expresion
+  132          | expresion • '<' expresion
+  133          | expresion • '>' expresion
+  134          | expresion • MENOR_IGUAL expresion
+  135          | expresion • MAYOR_IGUAL expresion
+  136          | expresion • AND expresion
+  137          | expresion • OR expresion
+  141          | expresion • INCREMENTO
+  142          | expresion • DECREMENTO
+  145          | expresion • '(' argumentos ')'
+  146          | expresion • '[' expresion ']'
+  147          | expresion • '.' IDENTIFICADOR
+
+    INCREMENTO   shift, and go to state 92
+    DECREMENTO   shift, and go to state 93
+    IGUALDAD     shift, and go to state 94
+    DIFERENTE    shift, and go to state 95
+    MENOR_IGUAL  shift, and go to state 96
+    MAYOR_IGUAL  shift, and go to state 97
+    AND          shift, and go to state 98
+    OR           shift, and go to state 99
+    '<'          shift, and go to state 100
+    '>'          shift, and go to state 101
+    '+'          shift, and go to state 102
+    '-'          shift, and go to state 103
+    '*'          shift, and go to state 104
+    '/'          shift, and go to state 105
+    '%'          shift, and go to state 106
+    '.'          shift, and go to state 107
+    '('          shift, and go to state 108
+    '['          shift, and go to state 109
+
+    INCREMENTO  [reduce using rule 100 (asignacion)]
+    DECREMENTO  [reduce using rule 100 (asignacion)]
+    '+'         [reduce using rule 100 (asignacion)]
+    '-'         [reduce using rule 100 (asignacion)]
+    '('         [reduce using rule 100 (asignacion)]
+    $default    reduce using rule 100 (asignacion)
+
+
+State 232
+
+  101 asignacion: expresion MOD_IGUAL expresion •
+  125 expresion: expresion • '+' expresion
+  126          | expresion • '-' expresion
+  127          | expresion • '*' expresion
+  128          | expresion • '/' expresion
+  129          | expresion • '%' expresion
+  130          | expresion • IGUALDAD expresion
+  131          | expresion • DIFERENTE expresion
+  132          | expresion • '<' expresion
+  133          | expresion • '>' expresion
+  134          | expresion • MENOR_IGUAL expresion
+  135          | expresion • MAYOR_IGUAL expresion
+  136          | expresion • AND expresion
+  137          | expresion • OR expresion
+  141          | expresion • INCREMENTO
+  142          | expresion • DECREMENTO
+  145          | expresion • '(' argumentos ')'
+  146          | expresion • '[' expresion ']'
+  147          | expresion • '.' IDENTIFICADOR
+
+    INCREMENTO   shift, and go to state 92
+    DECREMENTO   shift, and go to state 93
+    IGUALDAD     shift, and go to state 94
+    DIFERENTE    shift, and go to state 95
+    MENOR_IGUAL  shift, and go to state 96
+    MAYOR_IGUAL  shift, and go to state 97
+    AND          shift, and go to state 98
+    OR           shift, and go to state 99
+    '<'          shift, and go to state 100
+    '>'          shift, and go to state 101
+    '+'          shift, and go to state 102
+    '-'          shift, and go to state 103
+    '*'          shift, and go to state 104
+    '/'          shift, and go to state 105
+    '%'          shift, and go to state 106
+    '.'          shift, and go to state 107
+    '('          shift, and go to state 108
+    '['          shift, and go to state 109
+
+    INCREMENTO  [reduce using rule 101 (asignacion)]
+    DECREMENTO  [reduce using rule 101 (asignacion)]
+    '+'         [reduce using rule 101 (asignacion)]
+    '-'         [reduce using rule 101 (asignacion)]
+    '('         [reduce using rule 101 (asignacion)]
+    $default    reduce using rule 101 (asignacion)
+
+
+State 233
+
+   96 asignacion: expresion '=' expresion •
+  125 expresion: expresion • '+' expresion
+  126          | expresion • '-' expresion
+  127          | expresion • '*' expresion
+  128          | expresion • '/' expresion
+  129          | expresion • '%' expresion
+  130          | expresion • IGUALDAD expresion
+  131          | expresion • DIFERENTE expresion
+  132          | expresion • '<' expresion
+  133          | expresion • '>' expresion
+  134          | expresion • MENOR_IGUAL expresion
+  135          | expresion • MAYOR_IGUAL expresion
+  136          | expresion • AND expresion
+  137          | expresion • OR expresion
+  141          | expresion • INCREMENTO
+  142          | expresion • DECREMENTO
+  145          | expresion • '(' argumentos ')'
+  146          | expresion • '[' expresion ']'
+  147          | expresion • '.' IDENTIFICADOR
+
+    INCREMENTO   shift, and go to state 92
+    DECREMENTO   shift, and go to state 93
+    IGUALDAD     shift, and go to state 94
+    DIFERENTE    shift, and go to state 95
+    MENOR_IGUAL  shift, and go to state 96
+    MAYOR_IGUAL  shift, and go to state 97
+    AND          shift, and go to state 98
+    OR           shift, and go to state 99
+    '<'          shift, and go to state 100
+    '>'          shift, and go to state 101
+    '+'          shift, and go to state 102
+    '-'          shift, and go to state 103
+    '*'          shift, and go to state 104
+    '/'          shift, and go to state 105
+    '%'          shift, and go to state 106
+    '.'          shift, and go to state 107
+    '('          shift, and go to state 108
+    '['          shift, and go to state 109
+
+    INCREMENTO  [reduce using rule 96 (asignacion)]
+    DECREMENTO  [reduce using rule 96 (asignacion)]
+    '+'         [reduce using rule 96 (asignacion)]
+    '-'         [reduce using rule 96 (asignacion)]
+    '('         [reduce using rule 96 (asignacion)]
+    $default    reduce using rule 96 (asignacion)
+
+
+State 234
+
+   53 variable: VAR IDENTIFICADOR '=' expresion •
+  125 expresion: expresion • '+' expresion
+  126          | expresion • '-' expresion
+  127          | expresion • '*' expresion
+  128          | expresion • '/' expresion
+  129          | expresion • '%' expresion
+  130          | expresion • IGUALDAD expresion
+  131          | expresion • DIFERENTE expresion
+  132          | expresion • '<' expresion
+  133          | expresion • '>' expresion
+  134          | expresion • MENOR_IGUAL expresion
+  135          | expresion • MAYOR_IGUAL expresion
+  136          | expresion • AND expresion
+  137          | expresion • OR expresion
+  141          | expresion • INCREMENTO
+  142          | expresion • DECREMENTO
+  145          | expresion • '(' argumentos ')'
+  146          | expresion • '[' expresion ']'
+  147          | expresion • '.' IDENTIFICADOR
+
+    INCREMENTO   shift, and go to state 92
+    DECREMENTO   shift, and go to state 93
+    IGUALDAD     shift, and go to state 94
+    DIFERENTE    shift, and go to state 95
+    MENOR_IGUAL  shift, and go to state 96
+    MAYOR_IGUAL  shift, and go to state 97
+    AND          shift, and go to state 98
+    OR           shift, and go to state 99
+    '<'          shift, and go to state 100
+    '>'          shift, and go to state 101
+    '+'          shift, and go to state 102
+    '-'          shift, and go to state 103
+    '*'          shift, and go to state 104
+    '/'          shift, and go to state 105
+    '%'          shift, and go to state 106
+    '.'          shift, and go to state 107
+    '('          shift, and go to state 108
+    '['          shift, and go to state 109
+
+    INCREMENTO  [reduce using rule 53 (variable)]
+    DECREMENTO  [reduce using rule 53 (variable)]
+    '+'         [reduce using rule 53 (variable)]
+    '-'         [reduce using rule 53 (variable)]
+    '('         [reduce using rule 53 (variable)]
+    $default    reduce using rule 53 (variable)
+
+
+State 235
+
+   52 variable: VAR IDENTIFICADOR tipo '=' • expresion
+
+    IDENTIFICADOR  shift, and go to state 52
+    TIPO_DATO      shift, and go to state 53
+    CADENA         shift, and go to state 54
+    ENTERO         shift, and go to state 55
+    TRUE           shift, and go to state 56
+    FALSE          shift, and go to state 57
+    REAL           shift, and go to state 58
+    CARACTER       shift, and go to state 59
+    INCREMENTO     shift, and go to state 60
+    DECREMENTO     shift, and go to state 61
+    '+'            shift, and go to state 62
+    '-'            shift, and go to state 63
+    '!'            shift, and go to state 64
+    '('            shift, and go to state 65
+
+    expresion  go to state 251
+
+
+State 236
+
+   56 variable: VAR lista_ids '=' lista_expresiones •
+   59 lista_expresiones: lista_expresiones • ',' expresion
+
+    ','  shift, and go to state 249
+
+    $default  reduce using rule 56 (variable)
+
+
+State 237
+
+   62 constante: CONST IDENTIFICADOR '=' expresion •
+  125 expresion: expresion • '+' expresion
+  126          | expresion • '-' expresion
+  127          | expresion • '*' expresion
+  128          | expresion • '/' expresion
+  129          | expresion • '%' expresion
+  130          | expresion • IGUALDAD expresion
+  131          | expresion • DIFERENTE expresion
+  132          | expresion • '<' expresion
+  133          | expresion • '>' expresion
+  134          | expresion • MENOR_IGUAL expresion
+  135          | expresion • MAYOR_IGUAL expresion
+  136          | expresion • AND expresion
+  137          | expresion • OR expresion
+  141          | expresion • INCREMENTO
+  142          | expresion • DECREMENTO
+  145          | expresion • '(' argumentos ')'
+  146          | expresion • '[' expresion ']'
+  147          | expresion • '.' IDENTIFICADOR
+
+    INCREMENTO   shift, and go to state 92
+    DECREMENTO   shift, and go to state 93
+    IGUALDAD     shift, and go to state 94
+    DIFERENTE    shift, and go to state 95
+    MENOR_IGUAL  shift, and go to state 96
+    MAYOR_IGUAL  shift, and go to state 97
+    AND          shift, and go to state 98
+    OR           shift, and go to state 99
+    '<'          shift, and go to state 100
+    '>'          shift, and go to state 101
+    '+'          shift, and go to state 102
+    '-'          shift, and go to state 103
+    '*'          shift, and go to state 104
+    '/'          shift, and go to state 105
+    '%'          shift, and go to state 106
+    '.'          shift, and go to state 107
+    '('          shift, and go to state 108
+    '['          shift, and go to state 109
+
+    INCREMENTO  [reduce using rule 62 (constante)]
+    DECREMENTO  [reduce using rule 62 (constante)]
+    '+'         [reduce using rule 62 (constante)]
+    '-'         [reduce using rule 62 (constante)]
+    '('         [reduce using rule 62 (constante)]
+    $default    reduce using rule 62 (constante)
+
+
+State 238
+
+   61 constante: CONST IDENTIFICADOR tipo '=' • expresion
+
+    IDENTIFICADOR  shift, and go to state 52
+    TIPO_DATO      shift, and go to state 53
+    CADENA         shift, and go to state 54
+    ENTERO         shift, and go to state 55
+    TRUE           shift, and go to state 56
+    FALSE          shift, and go to state 57
+    REAL           shift, and go to state 58
+    CARACTER       shift, and go to state 59
+    INCREMENTO     shift, and go to state 60
+    DECREMENTO     shift, and go to state 61
+    '+'            shift, and go to state 62
+    '-'            shift, and go to state 63
+    '!'            shift, and go to state 64
+    '('            shift, and go to state 65
+
+    expresion  go to state 252
+
+
+State 239
+
+   74 sentencia: IF expresion $@5 bloque •
+
+    $default  reduce using rule 74 (sentencia)
+
+
+State 240
+
+   76 sentencia: IF expresion $@6 bloque • ELSE bloque
+
+    ELSE  shift, and go to state 253
+
+
+State 241
+
+   78 sentencia: IF expresion $@7 bloque • ELSE sentencia
+
+    ELSE  shift, and go to state 254
+
+
+State 242
+
+   82 sentencia: FOR inicializacion ';' condicion • ';' post_iteracion bloque
+
+    ';'  shift, and go to state 255
+
+
+State 243
+
+  108 condicion: expresion •
+  125 expresion: expresion • '+' expresion
+  126          | expresion • '-' expresion
+  127          | expresion • '*' expresion
+  128          | expresion • '/' expresion
+  129          | expresion • '%' expresion
+  130          | expresion • IGUALDAD expresion
+  131          | expresion • DIFERENTE expresion
+  132          | expresion • '<' expresion
+  133          | expresion • '>' expresion
+  134          | expresion • MENOR_IGUAL expresion
+  135          | expresion • MAYOR_IGUAL expresion
+  136          | expresion • AND expresion
+  137          | expresion • OR expresion
+  141          | expresion • INCREMENTO
+  142          | expresion • DECREMENTO
+  145          | expresion • '(' argumentos ')'
+  146          | expresion • '[' expresion ']'
+  147          | expresion • '.' IDENTIFICADOR
+
+    INCREMENTO   shift, and go to state 92
+    DECREMENTO   shift, and go to state 93
+    IGUALDAD     shift, and go to state 94
+    DIFERENTE    shift, and go to state 95
+    MENOR_IGUAL  shift, and go to state 96
+    MAYOR_IGUAL  shift, and go to state 97
+    AND          shift, and go to state 98
+    OR           shift, and go to state 99
+    '<'          shift, and go to state 100
+    '>'          shift, and go to state 101
+    '+'          shift, and go to state 102
+    '-'          shift, and go to state 103
+    '*'          shift, and go to state 104
+    '/'          shift, and go to state 105
+    '%'          shift, and go to state 106
+    '.'          shift, and go to state 107
+    '('          shift, and go to state 108
+    '['          shift, and go to state 109
+
+    $default  reduce using rule 108 (condicion)
+
+
+State 244
+
+   80 sentencia: FOR expresion $@8 bloque •
+
+    $default  reduce using rule 80 (sentencia)
+
+
+State 245
+
+  115 caso: CASE • expresion ':' sentencias
+
+    IDENTIFICADOR  shift, and go to state 52
+    TIPO_DATO      shift, and go to state 53
+    CADENA         shift, and go to state 54
+    ENTERO         shift, and go to state 55
+    TRUE           shift, and go to state 56
+    FALSE          shift, and go to state 57
+    REAL           shift, and go to state 58
+    CARACTER       shift, and go to state 59
+    INCREMENTO     shift, and go to state 60
+    DECREMENTO     shift, and go to state 61
+    '+'            shift, and go to state 62
+    '-'            shift, and go to state 63
+    '!'            shift, and go to state 64
+    '('            shift, and go to state 65
+
+    expresion  go to state 256
+
+
+State 246
+
+  116 caso: DEFAULT • ':' sentencias
+
+    ':'  shift, and go to state 257
+
+
+State 247
+
+   83 sentencia: SWITCH expresion '{' casos • '}'
+  113 casos: casos • caso
+
+    CASE     shift, and go to state 245
+    DEFAULT  shift, and go to state 246
+    '}'      shift, and go to state 258
+
+    caso  go to state 259
+
+
+State 248
+
+  114 casos: caso •
+
+    $default  reduce using rule 114 (casos)
+
+
+State 249
+
+   59 lista_expresiones: lista_expresiones ',' • expresion
+
+    IDENTIFICADOR  shift, and go to state 52
+    TIPO_DATO      shift, and go to state 53
+    CADENA         shift, and go to state 54
+    ENTERO         shift, and go to state 55
+    TRUE           shift, and go to state 56
+    FALSE          shift, and go to state 57
+    REAL           shift, and go to state 58
+    CARACTER       shift, and go to state 59
+    INCREMENTO     shift, and go to state 60
+    DECREMENTO     shift, and go to state 61
+    '+'            shift, and go to state 62
+    '-'            shift, and go to state 63
+    '!'            shift, and go to state 64
+    '('            shift, and go to state 65
+
+    expresion  go to state 260
+
+
+State 250
+
+   60 lista_expresiones: expresion ',' • expresion
+
+    IDENTIFICADOR  shift, and go to state 52
+    TIPO_DATO      shift, and go to state 53
+    CADENA         shift, and go to state 54
+    ENTERO         shift, and go to state 55
+    TRUE           shift, and go to state 56
+    FALSE          shift, and go to state 57
+    REAL           shift, and go to state 58
+    CARACTER       shift, and go to state 59
+    INCREMENTO     shift, and go to state 60
+    DECREMENTO     shift, and go to state 61
+    '+'            shift, and go to state 62
+    '-'            shift, and go to state 63
+    '!'            shift, and go to state 64
+    '('            shift, and go to state 65
+
+    expresion  go to state 261
+
+
+State 251
+
+   52 variable: VAR IDENTIFICADOR tipo '=' expresion •
+  125 expresion: expresion • '+' expresion
+  126          | expresion • '-' expresion
+  127          | expresion • '*' expresion
+  128          | expresion • '/' expresion
+  129          | expresion • '%' expresion
+  130          | expresion • IGUALDAD expresion
+  131          | expresion • DIFERENTE expresion
+  132          | expresion • '<' expresion
+  133          | expresion • '>' expresion
+  134          | expresion • MENOR_IGUAL expresion
+  135          | expresion • MAYOR_IGUAL expresion
+  136          | expresion • AND expresion
+  137          | expresion • OR expresion
+  141          | expresion • INCREMENTO
+  142          | expresion • DECREMENTO
+  145          | expresion • '(' argumentos ')'
+  146          | expresion • '[' expresion ']'
+  147          | expresion • '.' IDENTIFICADOR
+
+    INCREMENTO   shift, and go to state 92
+    DECREMENTO   shift, and go to state 93
+    IGUALDAD     shift, and go to state 94
+    DIFERENTE    shift, and go to state 95
+    MENOR_IGUAL  shift, and go to state 96
+    MAYOR_IGUAL  shift, and go to state 97
+    AND          shift, and go to state 98
+    OR           shift, and go to state 99
+    '<'          shift, and go to state 100
+    '>'          shift, and go to state 101
+    '+'          shift, and go to state 102
+    '-'          shift, and go to state 103
+    '*'          shift, and go to state 104
+    '/'          shift, and go to state 105
+    '%'          shift, and go to state 106
+    '.'          shift, and go to state 107
+    '('          shift, and go to state 108
+    '['          shift, and go to state 109
+
+    INCREMENTO  [reduce using rule 52 (variable)]
+    DECREMENTO  [reduce using rule 52 (variable)]
+    '+'         [reduce using rule 52 (variable)]
+    '-'         [reduce using rule 52 (variable)]
+    '('         [reduce using rule 52 (variable)]
+    $default    reduce using rule 52 (variable)
+
+
+State 252
+
+   61 constante: CONST IDENTIFICADOR tipo '=' expresion •
+  125 expresion: expresion • '+' expresion
+  126          | expresion • '-' expresion
+  127          | expresion • '*' expresion
+  128          | expresion • '/' expresion
+  129          | expresion • '%' expresion
+  130          | expresion • IGUALDAD expresion
+  131          | expresion • DIFERENTE expresion
+  132          | expresion • '<' expresion
+  133          | expresion • '>' expresion
+  134          | expresion • MENOR_IGUAL expresion
+  135          | expresion • MAYOR_IGUAL expresion
+  136          | expresion • AND expresion
+  137          | expresion • OR expresion
+  141          | expresion • INCREMENTO
+  142          | expresion • DECREMENTO
+  145          | expresion • '(' argumentos ')'
+  146          | expresion • '[' expresion ']'
+  147          | expresion • '.' IDENTIFICADOR
+
+    INCREMENTO   shift, and go to state 92
+    DECREMENTO   shift, and go to state 93
+    IGUALDAD     shift, and go to state 94
+    DIFERENTE    shift, and go to state 95
+    MENOR_IGUAL  shift, and go to state 96
+    MAYOR_IGUAL  shift, and go to state 97
+    AND          shift, and go to state 98
+    OR           shift, and go to state 99
+    '<'          shift, and go to state 100
+    '>'          shift, and go to state 101
+    '+'          shift, and go to state 102
+    '-'          shift, and go to state 103
+    '*'          shift, and go to state 104
+    '/'          shift, and go to state 105
+    '%'          shift, and go to state 106
+    '.'          shift, and go to state 107
+    '('          shift, and go to state 108
+    '['          shift, and go to state 109
+
+    INCREMENTO  [reduce using rule 61 (constante)]
+    DECREMENTO  [reduce using rule 61 (constante)]
+    '+'         [reduce using rule 61 (constante)]
+    '-'         [reduce using rule 61 (constante)]
+    '('         [reduce using rule 61 (constante)]
+    $default    reduce using rule 61 (constante)
+
+
+State 253
+
+   76 sentencia: IF expresion $@6 bloque ELSE • bloque
+
+    '{'  shift, and go to state 158
+
+    bloque  go to state 262
+
+
+State 254
+
+   78 sentencia: IF expresion $@7 bloque ELSE • sentencia
+
+    IDENTIFICADOR  shift, and go to state 166
+    TIPO_DATO      shift, and go to state 53
+    CADENA         shift, and go to state 54
+    ENTERO         shift, and go to state 55
+    TRUE           shift, and go to state 56
+    FALSE          shift, and go to state 57
+    REAL           shift, and go to state 58
+    CARACTER       shift, and go to state 59
+    VAR            shift, and go to state 167
+    CONST          shift, and go to state 168
+    IF             shift, and go to state 169
+    FOR            shift, and go to state 170
+    SWITCH         shift, and go to state 171
+    RETURN         shift, and go to state 172
+    BREAK          shift, and go to state 173
+    CONTINUE       shift, and go to state 174
+    INCREMENTO     shift, and go to state 60
+    DECREMENTO     shift, and go to state 61
+    '+'            shift, and go to state 62
+    '-'            shift, and go to state 63
+    '!'            shift, and go to state 64
+    '('            shift, and go to state 65
+    '{'            shift, and go to state 158
+
+    variable                    go to state 176
+    lista_ids                   go to state 177
+    constante                   go to state 178
+    bloque                      go to state 179
+    sentencia                   go to state 263
+    declaracion_corta           go to state 181
+    declaracion_corta_multiple  go to state 182
+    asignacion                  go to state 183
+    asignacion_multiple         go to state 184
+    expresion                   go to state 185
+
+
+State 255
+
+   82 sentencia: FOR inicializacion ';' condicion ';' • post_iteracion bloque
+
+    IDENTIFICADOR  shift, and go to state 52
+    TIPO_DATO      shift, and go to state 53
+    CADENA         shift, and go to state 54
+    ENTERO         shift, and go to state 55
+    TRUE           shift, and go to state 56
+    FALSE          shift, and go to state 57
+    REAL           shift, and go to state 58
+    CARACTER       shift, and go to state 59
+    INCREMENTO     shift, and go to state 60
+    DECREMENTO     shift, and go to state 61
+    '+'            shift, and go to state 62
+    '-'            shift, and go to state 63
+    '!'            shift, and go to state 64
+    '('            shift, and go to state 65
+
+    $default  reduce using rule 112 (post_iteracion)
+
+    asignacion      go to state 264
+    post_iteracion  go to state 265
+    expresion       go to state 266
+
+
+State 256
+
+  115 caso: CASE expresion • ':' sentencias
+  125 expresion: expresion • '+' expresion
+  126          | expresion • '-' expresion
+  127          | expresion • '*' expresion
+  128          | expresion • '/' expresion
+  129          | expresion • '%' expresion
+  130          | expresion • IGUALDAD expresion
+  131          | expresion • DIFERENTE expresion
+  132          | expresion • '<' expresion
+  133          | expresion • '>' expresion
+  134          | expresion • MENOR_IGUAL expresion
+  135          | expresion • MAYOR_IGUAL expresion
+  136          | expresion • AND expresion
+  137          | expresion • OR expresion
+  141          | expresion • INCREMENTO
+  142          | expresion • DECREMENTO
+  145          | expresion • '(' argumentos ')'
+  146          | expresion • '[' expresion ']'
+  147          | expresion • '.' IDENTIFICADOR
+
+    INCREMENTO   shift, and go to state 92
+    DECREMENTO   shift, and go to state 93
+    IGUALDAD     shift, and go to state 94
+    DIFERENTE    shift, and go to state 95
+    MENOR_IGUAL  shift, and go to state 96
+    MAYOR_IGUAL  shift, and go to state 97
+    AND          shift, and go to state 98
+    OR           shift, and go to state 99
+    '<'          shift, and go to state 100
+    '>'          shift, and go to state 101
+    '+'          shift, and go to state 102
+    '-'          shift, and go to state 103
+    '*'          shift, and go to state 104
+    '/'          shift, and go to state 105
+    '%'          shift, and go to state 106
+    '.'          shift, and go to state 107
+    '('          shift, and go to state 108
+    '['          shift, and go to state 109
+    ':'          shift, and go to state 267
+
+
+State 257
+
+  116 caso: DEFAULT ':' • sentencias
+
+    $default  reduce using rule 70 (sentencias)
+
+    sentencias  go to state 268
+
+
+State 258
+
+   83 sentencia: SWITCH expresion '{' casos '}' •
+
+    $default  reduce using rule 83 (sentencia)
+
+
+State 259
+
+  113 casos: casos caso •
+
+    $default  reduce using rule 113 (casos)
+
+
+State 260
+
+   59 lista_expresiones: lista_expresiones ',' expresion •
+  125 expresion: expresion • '+' expresion
+  126          | expresion • '-' expresion
+  127          | expresion • '*' expresion
+  128          | expresion • '/' expresion
+  129          | expresion • '%' expresion
+  130          | expresion • IGUALDAD expresion
+  131          | expresion • DIFERENTE expresion
+  132          | expresion • '<' expresion
+  133          | expresion • '>' expresion
+  134          | expresion • MENOR_IGUAL expresion
+  135          | expresion • MAYOR_IGUAL expresion
+  136          | expresion • AND expresion
+  137          | expresion • OR expresion
+  141          | expresion • INCREMENTO
+  142          | expresion • DECREMENTO
+  145          | expresion • '(' argumentos ')'
+  146          | expresion • '[' expresion ']'
+  147          | expresion • '.' IDENTIFICADOR
+
+    INCREMENTO   shift, and go to state 92
+    DECREMENTO   shift, and go to state 93
+    IGUALDAD     shift, and go to state 94
+    DIFERENTE    shift, and go to state 95
+    MENOR_IGUAL  shift, and go to state 96
+    MAYOR_IGUAL  shift, and go to state 97
+    AND          shift, and go to state 98
+    OR           shift, and go to state 99
+    '<'          shift, and go to state 100
+    '>'          shift, and go to state 101
+    '+'          shift, and go to state 102
+    '-'          shift, and go to state 103
+    '*'          shift, and go to state 104
+    '/'          shift, and go to state 105
+    '%'          shift, and go to state 106
+    '.'          shift, and go to state 107
+    '('          shift, and go to state 108
+    '['          shift, and go to state 109
+
+    INCREMENTO  [reduce using rule 59 (lista_expresiones)]
+    DECREMENTO  [reduce using rule 59 (lista_expresiones)]
+    '+'         [reduce using rule 59 (lista_expresiones)]
+    '-'         [reduce using rule 59 (lista_expresiones)]
+    '('         [reduce using rule 59 (lista_expresiones)]
+    $default    reduce using rule 59 (lista_expresiones)
+
+
+State 261
+
+   60 lista_expresiones: expresion ',' expresion •
+  125 expresion: expresion • '+' expresion
+  126          | expresion • '-' expresion
+  127          | expresion • '*' expresion
+  128          | expresion • '/' expresion
+  129          | expresion • '%' expresion
+  130          | expresion • IGUALDAD expresion
+  131          | expresion • DIFERENTE expresion
+  132          | expresion • '<' expresion
+  133          | expresion • '>' expresion
+  134          | expresion • MENOR_IGUAL expresion
+  135          | expresion • MAYOR_IGUAL expresion
+  136          | expresion • AND expresion
+  137          | expresion • OR expresion
+  141          | expresion • INCREMENTO
+  142          | expresion • DECREMENTO
+  145          | expresion • '(' argumentos ')'
+  146          | expresion • '[' expresion ']'
+  147          | expresion • '.' IDENTIFICADOR
+
+    INCREMENTO   shift, and go to state 92
+    DECREMENTO   shift, and go to state 93
+    IGUALDAD     shift, and go to state 94
+    DIFERENTE    shift, and go to state 95
+    MENOR_IGUAL  shift, and go to state 96
+    MAYOR_IGUAL  shift, and go to state 97
+    AND          shift, and go to state 98
+    OR           shift, and go to state 99
+    '<'          shift, and go to state 100
+    '>'          shift, and go to state 101
+    '+'          shift, and go to state 102
+    '-'          shift, and go to state 103
+    '*'          shift, and go to state 104
+    '/'          shift, and go to state 105
+    '%'          shift, and go to state 106
+    '.'          shift, and go to state 107
+    '('          shift, and go to state 108
+    '['          shift, and go to state 109
+
+    INCREMENTO  [reduce using rule 60 (lista_expresiones)]
+    DECREMENTO  [reduce using rule 60 (lista_expresiones)]
+    '+'         [reduce using rule 60 (lista_expresiones)]
+    '-'         [reduce using rule 60 (lista_expresiones)]
+    '('         [reduce using rule 60 (lista_expresiones)]
+    $default    reduce using rule 60 (lista_expresiones)
+
+
+State 262
+
+   76 sentencia: IF expresion $@6 bloque ELSE bloque •
+
+    $default  reduce using rule 76 (sentencia)
+
+
+State 263
+
+   78 sentencia: IF expresion $@7 bloque ELSE sentencia •
+
+    $default  reduce using rule 78 (sentencia)
+
+
+State 264
+
+  111 post_iteracion: asignacion •
+
+    $default  reduce using rule 111 (post_iteracion)
+
+
+State 265
+
+   82 sentencia: FOR inicializacion ';' condicion ';' post_iteracion • bloque
+
+    '{'  shift, and go to state 158
+
+    bloque  go to state 269
+
+
+State 266
+
+   96 asignacion: expresion • '=' expresion
+   97           | expresion • MAS_IGUAL expresion
+   98           | expresion • MENOS_IGUAL expresion
+   99           | expresion • POR_IGUAL expresion
+  100           | expresion • DIV_IGUAL expresion
+  101           | expresion • MOD_IGUAL expresion
+  110 post_iteracion: expresion •
+  125 expresion: expresion • '+' expresion
+  126          | expresion • '-' expresion
+  127          | expresion • '*' expresion
+  128          | expresion • '/' expresion
+  129          | expresion • '%' expresion
+  130          | expresion • IGUALDAD expresion
+  131          | expresion • DIFERENTE expresion
+  132          | expresion • '<' expresion
+  133          | expresion • '>' expresion
+  134          | expresion • MENOR_IGUAL expresion
+  135          | expresion • MAYOR_IGUAL expresion
+  136          | expresion • AND expresion
+  137          | expresion • OR expresion
+  141          | expresion • INCREMENTO
+  142          | expresion • DECREMENTO
+  145          | expresion • '(' argumentos ')'
+  146          | expresion • '[' expresion ']'
+  147          | expresion • '.' IDENTIFICADOR
+
+    INCREMENTO   shift, and go to state 92
+    DECREMENTO   shift, and go to state 93
+    MAS_IGUAL    shift, and go to state 204
+    MENOS_IGUAL  shift, and go to state 205
+    POR_IGUAL    shift, and go to state 206
+    DIV_IGUAL    shift, and go to state 207
+    MOD_IGUAL    shift, and go to state 208
+    IGUALDAD     shift, and go to state 94
+    DIFERENTE    shift, and go to state 95
+    MENOR_IGUAL  shift, and go to state 96
+    MAYOR_IGUAL  shift, and go to state 97
+    AND          shift, and go to state 98
+    OR           shift, and go to state 99
+    '<'          shift, and go to state 100
+    '>'          shift, and go to state 101
+    '+'          shift, and go to state 102
+    '-'          shift, and go to state 103
+    '*'          shift, and go to state 104
+    '/'          shift, and go to state 105
+    '%'          shift, and go to state 106
+    '.'          shift, and go to state 107
+    '('          shift, and go to state 108
+    '['          shift, and go to state 109
+    '='          shift, and go to state 209
+
+    $default  reduce using rule 110 (post_iteracion)
+
+
+State 267
+
+  115 caso: CASE expresion ':' • sentencias
+
+    $default  reduce using rule 70 (sentencias)
+
+    sentencias  go to state 270
+
+
+State 268
+
+   69 sentencias: sentencias • sentencia
+  116 caso: DEFAULT ':' sentencias •
+
+    IDENTIFICADOR  shift, and go to state 166
+    TIPO_DATO      shift, and go to state 53
+    CADENA         shift, and go to state 54
+    ENTERO         shift, and go to state 55
+    TRUE           shift, and go to state 56
+    FALSE          shift, and go to state 57
+    REAL           shift, and go to state 58
+    CARACTER       shift, and go to state 59
+    VAR            shift, and go to state 167
+    CONST          shift, and go to state 168
+    IF             shift, and go to state 169
+    FOR            shift, and go to state 170
+    SWITCH         shift, and go to state 171
+    RETURN         shift, and go to state 172
+    BREAK          shift, and go to state 173
+    CONTINUE       shift, and go to state 174
+    INCREMENTO     shift, and go to state 60
+    DECREMENTO     shift, and go to state 61
+    '+'            shift, and go to state 62
+    '-'            shift, and go to state 63
+    '!'            shift, and go to state 64
+    '('            shift, and go to state 65
+    '{'            shift, and go to state 158
+
+    $default  reduce using rule 116 (caso)
+
+    variable                    go to state 176
+    lista_ids                   go to state 177
+    constante                   go to state 178
+    bloque                      go to state 179
+    sentencia                   go to state 180
+    declaracion_corta           go to state 181
+    declaracion_corta_multiple  go to state 182
+    asignacion                  go to state 183
+    asignacion_multiple         go to state 184
+    expresion                   go to state 185
+
+
+State 269
+
+   82 sentencia: FOR inicializacion ';' condicion ';' post_iteracion bloque •
+
+    $default  reduce using rule 82 (sentencia)
+
+
+State 270
+
+   69 sentencias: sentencias • sentencia
+  115 caso: CASE expresion ':' sentencias •
+
+    IDENTIFICADOR  shift, and go to state 166
+    TIPO_DATO      shift, and go to state 53
+    CADENA         shift, and go to state 54
+    ENTERO         shift, and go to state 55
+    TRUE           shift, and go to state 56
+    FALSE          shift, and go to state 57
+    REAL           shift, and go to state 58
+    CARACTER       shift, and go to state 59
+    VAR            shift, and go to state 167
+    CONST          shift, and go to state 168
+    IF             shift, and go to state 169
+    FOR            shift, and go to state 170
+    SWITCH         shift, and go to state 171
+    RETURN         shift, and go to state 172
+    BREAK          shift, and go to state 173
+    CONTINUE       shift, and go to state 174
+    INCREMENTO     shift, and go to state 60
+    DECREMENTO     shift, and go to state 61
+    '+'            shift, and go to state 62
+    '-'            shift, and go to state 63
+    '!'            shift, and go to state 64
+    '('            shift, and go to state 65
+    '{'            shift, and go to state 158
+
+    $default  reduce using rule 115 (caso)
+
+    variable                    go to state 176
+    lista_ids                   go to state 177
+    constante                   go to state 178
+    bloque                      go to state 179
+    sentencia                   go to state 180
+    declaracion_corta           go to state 181
+    declaracion_corta_multiple  go to state 182
+    asignacion                  go to state 183
+    asignacion_multiple         go to state 184
+    expresion                   go to state 185

@@ -8,6 +8,7 @@ int yylex(void);
 void yyerror(const char *s);
 
 int errorCount = 0;
+extern int lexicalErrors;
 Symbol *currentFunction = NULL;
 bool hasReturnStatement = false;
 %}
@@ -70,26 +71,37 @@ programa:
     }
     imports declaraciones_top
     {
-        if (errorCount == 0 && semanticErrors == 0) {
-            printf("\n  Analisis completado exitosamente.\n");
-        } else {
-            printf("\n  Se encontraron %d errores sintacticos y %d errores semanticos.\n", 
-                   errorCount, semanticErrors);
-        }
+    if (errorCount == 0 && semanticErrors == 0 && lexicalErrors == 0) {
+        printf("\n✓ Análisis completado exitosamente.\n");
+    } else {
+        printf("\n✗ Se encontraron:\n");
+        if (lexicalErrors > 0) 
+            printf("  - %d error(es) léxico(s)\n", lexicalErrors);
+        if (errorCount > 0) 
+            printf("  - %d error(es) sintáctico(s)\n", errorCount);
+        if (semanticErrors > 0) 
+            printf("  - %d error(es) semántico(s)\n", semanticErrors);
+    }
     }
     | PACKAGE IDENTIFICADOR 
-    {
-        initSymbolTable();
+{
+    initSymbolTable();
+}
+declaraciones_top
+{
+    if (errorCount == 0 && semanticErrors == 0 && lexicalErrors == 0) {
+        printf("\nAnalisis completado exitosamente.\n");
+    } else {
+        printf("\nAnalisis finalizado.\n");
+        printf("\nSe encontraron:\n");
+        if (lexicalErrors > 0) 
+            printf("  - %d error(es) lexico(s)\n", lexicalErrors);
+        if (errorCount > 0) 
+            printf("  - %d error(es) sintactico(s)\n", errorCount);
+        if (semanticErrors > 0) 
+            printf("  - %d error(es) semantico(s)\n", semanticErrors);
     }
-    declaraciones_top
-    {
-        if (errorCount == 0 && semanticErrors == 0) {
-            printf("\n  Analisis completado exitosamente.\n");
-        } else {
-            printf("\n  Se encontraron %d errores sintacticos y %d errores semanticos.\n", 
-                   errorCount, semanticErrors);
-        }
-    }
+}
     ;
 
 imports:
@@ -638,10 +650,10 @@ expresion:
     {
         Symbol *sym = lookupSymbol($1);
         if (!sym) {
-          
+            semanticError(@1.first_line, @1.first_column,
+                "Variable no declarada: '%s'", $1);
             $$ = TYPE_UNKNOWN;
-        } else {
-           
+        } else {           
             $$ = sym->type;
         }
         free($1);
@@ -885,5 +897,5 @@ int main(int argc, char *argv[]) {
     yyparse();
     
     fclose(yyin);
-    return (errorCount > 0 || semanticErrors > 0) ? 1 : 0;
+    return (errorCount > 0 || semanticErrors > 0 || lexicalErrors > 0) ? 1 : 0;
 }
