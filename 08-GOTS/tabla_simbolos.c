@@ -4,12 +4,9 @@
 #include <string.h>
 #include <stdarg.h>
 
-// Variables globales
 Scope *currentScope = NULL;
 Scope *globalScope = NULL;
 int semanticErrors = 0;
-
-// ========== INICIALIZACIÓN ==========
 
 void initSymbolTable() {
     globalScope = malloc(sizeof(Scope));
@@ -30,14 +27,10 @@ void enterScope() {
 
 void exitScope() {
     if (currentScope == globalScope) {
-        return; // No salir del scope global
+        return;
     }
     currentScope = currentScope->parent;
-    // No liberamos el scope porque puede necesitarse para debugging
-    // En producción podrías llamar freeScope(oldScope)
 }
-
-// ========== BÚSQUEDA DE SÍMBOLOS ==========
 
 Symbol* lookupSymbolInCurrentScope(const char *name) {
     Symbol *current = currentScope->symbols;
@@ -73,18 +66,14 @@ bool isDeclaredInCurrentScope(const char *name) {
     return lookupSymbolInCurrentScope(name) != NULL;
 }
 
-// ========== INSERCIÓN DE SÍMBOLOS ==========
-
-Symbol* insertSymbol(const char *name, SymbolKind kind, DataType type, 
+Symbol* insertSymbol(const char *name, SymbolKind kind, DataType type,
                      int line, int column) {
-    // Verificar si ya existe en el scope actual
     if (lookupSymbolInCurrentScope(name)) {
-        semanticError(line, column, 
+        semanticError(line, column,
             "Redeclaración de '%s'", name);
         return NULL;
     }
     
-    // Crear nuevo símbolo
     Symbol *newSym = malloc(sizeof(Symbol));
     newSym->name = strdup(name);
     newSym->kind = kind;
@@ -102,14 +91,11 @@ Symbol* insertSymbol(const char *name, SymbolKind kind, DataType type,
     newSym->arraySize = 0;
     newSym->next = NULL;
     
-    // Insertar al inicio de la lista del scope actual
     newSym->next = currentScope->symbols;
     currentScope->symbols = newSym;
     
     return newSym;
 }
-
-// ========== FUNCIONES AUXILIARES PARA SÍMBOLOS ==========
 
 void setSymbolInitialized(Symbol *sym) {
     if (sym) {
@@ -134,7 +120,6 @@ void addParameter(Symbol *funcSym, const char *paramName, DataType paramType) {
     newParam->type = paramType;
     newParam->next = NULL;
     
-    // Agregar al final de la lista
     if (funcSym->parameters == NULL) {
         funcSym->parameters = newParam;
     } else {
@@ -153,8 +138,6 @@ void setReturnType(Symbol *funcSym, DataType returnType) {
         funcSym->returnType = returnType;
     }
 }
-
-// ========== CONVERSIÓN DE TIPOS ==========
 
 DataType stringToDataType(const char *typeStr) {
     if (!typeStr) return TYPE_UNKNOWN;
@@ -188,18 +171,14 @@ const char* dataTypeToString(DataType type) {
 }
 
 bool areTypesCompatible(DataType type1, DataType type2) {
-    // Tipos desconocidos son compatibles con todo (para evitar cascada de errores)
     if (type1 == TYPE_UNKNOWN || type2 == TYPE_UNKNOWN) {
         return true;
     }
     
-    // Mismos tipos
     if (type1 == type2) {
         return true;
     }
     
-    // Conversiones implícitas permitidas en Go (simplificado)
-    // int -> float32/float64
     if (type1 == TYPE_INT && (type2 == TYPE_FLOAT32 || type2 == TYPE_FLOAT64)) {
         return true;
     }
@@ -207,7 +186,6 @@ bool areTypesCompatible(DataType type1, DataType type2) {
         return true;
     }
     
-    // float32 <-> float64
     if ((type1 == TYPE_FLOAT32 && type2 == TYPE_FLOAT64) ||
         (type1 == TYPE_FLOAT64 && type2 == TYPE_FLOAT32)) {
         return true;
@@ -217,47 +195,38 @@ bool areTypesCompatible(DataType type1, DataType type2) {
 }
 
 DataType getResultType(DataType type1, DataType type2, const char *op) {
-    // Si alguno es desconocido, retornar desconocido
     if (type1 == TYPE_UNKNOWN || type2 == TYPE_UNKNOWN) {
         return TYPE_UNKNOWN;
     }
     
-    // Para operaciones aritméticas
     if (strcmp(op, "+") == 0 || strcmp(op, "-") == 0 || 
         strcmp(op, "*") == 0 || strcmp(op, "/") == 0) {
         
-        // Si ambos son int, resultado es int
         if (type1 == TYPE_INT && type2 == TYPE_INT) {
             return TYPE_INT;
         }
         
-        // Si hay float64, resultado es float64
         if (type1 == TYPE_FLOAT64 || type2 == TYPE_FLOAT64) {
             return TYPE_FLOAT64;
         }
         
-        // Si hay float32, resultado es float32
         if (type1 == TYPE_FLOAT32 || type2 == TYPE_FLOAT32) {
             return TYPE_FLOAT32;
         }
     }
     
-    // Para operaciones de comparación
     if (strcmp(op, "==") == 0 || strcmp(op, "!=") == 0 ||
         strcmp(op, "<") == 0 || strcmp(op, ">") == 0 ||
         strcmp(op, "<=") == 0 || strcmp(op, ">=") == 0) {
         return TYPE_BOOL;
     }
     
-    // Para operaciones lógicas
     if (strcmp(op, "&&") == 0 || strcmp(op, "||") == 0) {
         return TYPE_BOOL;
     }
     
-    return type1; // Por defecto, retornar el primer tipo
+    return type1;
 }
-
-// ========== REPORTE DE ERRORES ==========
 
 void semanticError(int line, int column, const char *format, ...) {
     fprintf(stderr, "Error semántico [línea %d, columna %d]: ", line, column);
@@ -285,7 +254,7 @@ void printSymbol(Symbol *sym, int level) {
             printf("Constante   | %-10s", dataTypeToString(sym->type));
             break;
         case SYM_FUNCTION:
-            printf("Función     | retorna %-10s | %d parámetros", 
+            printf("Función     | retorna %-10s | %d parámetros",
                    dataTypeToString(sym->returnType), sym->paramCount);
             break;
         case SYM_TYPE:
@@ -298,7 +267,6 @@ void printSymbol(Symbol *sym, int level) {
     
     printf(" (línea %d)\n", sym->line);
     
-    // Imprimir parámetros si es función
     if (sym->kind == SYM_FUNCTION && sym->parameters) {
         Parameter *param = sym->parameters;
         while (param) {
@@ -317,8 +285,6 @@ void printScope(Scope *scope) {
         current = current->next;
     }
 }
-
-// ========== LIBERACIÓN DE MEMORIA ==========
 
 void freeParameter(Parameter *param) {
     if (!param) return;
