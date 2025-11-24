@@ -229,7 +229,7 @@ DataType getResultType(DataType type1, DataType type2, const char *op) {
 }
 
 void semanticError(int line, int column, const char *format, ...) {
-    fprintf(stderr, "Error semántico [línea %d, columna %d]: ", line, column);
+    fprintf(stderr, "Error semantico [linea %d, columna %d]: ", line, column);
     
     va_list args;
     va_start(args, format);
@@ -254,18 +254,18 @@ void printSymbol(Symbol *sym, int level) {
             printf("Constante   | %-10s", dataTypeToString(sym->type));
             break;
         case SYM_FUNCTION:
-            printf("Función     | retorna %-10s | %d parámetros",
+            printf("Funcion     | retorna %-10s | %d parametros",
                    dataTypeToString(sym->returnType), sym->paramCount);
             break;
         case SYM_TYPE:
             printf("Tipo        | %-10s", dataTypeToString(sym->type));
             break;
         case SYM_PARAMETER:
-            printf("Parámetro   | %-10s", dataTypeToString(sym->type));
+            printf("Parametro   | %-10s", dataTypeToString(sym->type));
             break;
     }
     
-    printf(" (línea %d)\n", sym->line);
+    printf(" (linea %d)\n", sym->line);
     
     if (sym->kind == SYM_FUNCTION && sym->parameters) {
         Parameter *param = sym->parameters;
